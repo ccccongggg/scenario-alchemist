@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="MU9uhXuYNDektr1Gup7A9m">
+<head data-page-node-id="r8gMNCpEZMvaxyb7TvqHqe">
+<meta charset="utf-8" data-page-node-id="FCNklFEo2C1RqQCEpaQqCw">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="xaPslVAPXBmc6qhazxrcZo">
+<title>场景炼金师 · 星辰图（一帖千面）</title>
+<style>
+  :root{
+    --ink:#0A0B0F; --panel:#141620; --panel2:#1B1E29; --line:#262A36;
+    --t1:#E9E7E2; --t2:#9A968E; --t3:#6B6862;
+    --gold:#E7B873;
+    --r:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:radial-gradient(1200px 760px at 32% -12%, #13162a 0%, #0A0B0F 60%);
+    color:var(--t1);
+    font:14px/1.6 "PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans SC",
+         "MiSans","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+  }
+  .app{display:flex; flex-direction:column; height:100vh; min-height:760px; position:relative}
+
+  header{
+    display:flex; align-items:center; gap:18px; padding:14px 22px;
+    border-bottom:1px solid var(--line); background:rgba(10,11,15,.7); backdrop-filter:blur(8px);
+  }
+  .brand{font-size:15px; font-weight:500; letter-spacing:.5px}
+  .brand b{color:var(--gold); font-weight:500}
+  .posts{display:flex; gap:8px; margin-left:6px}
+  .post-chip{
+    padding:6px 12px; border:1px solid var(--line); border-radius:999px;
+    background:transparent; color:var(--t2); font-size:12px; cursor:pointer; transition:.2s; white-space:nowrap; font-family:inherit;
+  }
+  .post-chip:hover{color:var(--t1); border-color:#3A3F4E}
+  .post-chip.on{color:#1A1508; background:var(--gold); border-color:var(--gold)}
+  .spacer{flex:1}
+  .grow-btn{
+    padding:7px 14px; border:1px solid var(--gold); border-radius:8px; background:transparent;
+    color:var(--gold); font-size:12.5px; cursor:pointer; transition:.2s; font-family:inherit; white-space:nowrap;
+  }
+  .grow-btn:hover{background:var(--gold); color:#1A1508}
+  .grow-btn:disabled{opacity:.4; cursor:default; background:transparent; color:var(--gold)}
+  .browse-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 14px; border:1px solid var(--line); border-radius:8px; background:transparent;
+    color:var(--t2); font-size:12.5px; cursor:pointer; transition:.2s; font-family:inherit; white-space:nowrap;
+  }
+  .browse-btn:hover{color:var(--t1); border-color:#3A3F4E; background:rgba(32,35,46,.55)}
+  .browse-btn b{color:var(--gold); font-weight:600}
+
+  /* 已收录场景 抽屉 */
+  .drawer{
+    position:absolute; top:0; right:0; height:100%; width:430px; max-width:84vw; z-index:20;
+    background:linear-gradient(180deg,#111319,#0B0C11); border-left:1px solid var(--line);
+    transform:translateX(103%); transition:transform .42s cubic-bezier(.22,1,.36,1);
+    display:flex; flex-direction:column; box-shadow:-26px 0 70px rgba(0,0,0,.55);
+  }
+  .drawer.open{transform:none}
+  .drawer-hd{display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--line)}
+  .drawer-hd .dt{font-size:14px; font-weight:500; letter-spacing:.3px}
+  .drawer-hd .ds{font-size:11.5px; color:var(--t3); margin-top:2px}
+  .drawer-hd .dclose{
+    margin-left:auto; width:30px; height:30px; flex:0 0 30px; border-radius:8px; border:1px solid var(--line);
+    background:transparent; color:var(--t2); cursor:pointer; font-size:14px; line-height:1; font-family:inherit; transition:.18s;
+  }
+  .drawer-hd .dclose:hover{color:var(--t1); border-color:#3A3F4E; background:rgba(32,35,46,.7)}
+  .drawer-list{flex:1; overflow-y:auto; padding:8px 12px 28px}
+  .drawer-list::-webkit-scrollbar{width:6px}
+  .drawer-list::-webkit-scrollbar-thumb{background:#2A2E3A; border-radius:3px}
+  .dgrp{font-size:11px; letter-spacing:1.5px; color:var(--t3); padding:16px 8px 7px}
+  .drow{
+    display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px;
+    border:1px solid transparent; cursor:pointer; transition:.16s; margin-bottom:3px;
+  }
+  .drow:hover{background:var(--panel2); border-color:var(--line)}
+  .drow.on{background:var(--panel2); border-color:var(--gold)}
+  .ddot{width:9px; height:9px; border-radius:50%; flex:0 0 9px; border:1.6px solid var(--dc); background:transparent}
+  .ddot.v{background:var(--dc)}
+  .drow .dn{font-size:13px; color:var(--t1)}
+  .drow .dm{margin-left:auto; font-size:11px; color:var(--t3); white-space:nowrap}
+
+  main{flex:1; display:flex; min-height:0}
+  .stage{flex:1; position:relative; min-width:0; overflow:hidden}
+  /* 星海背景 */
+  .space{position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(620px 420px at 78% 18%, rgba(91,155,213,.10), transparent 60%),
+      radial-gradient(520px 380px at 18% 82%, rgba(231,184,115,.08), transparent 60%),
+      radial-gradient(900px 600px at 50% 50%, rgba(40,46,80,.18), transparent 70%);}
+  .bgstars{position:absolute; inset:0; width:100%; height:100%}
+  svg#web{position:relative; z-index:1; width:100%; height:100%; display:block}
+
+  aside{
+    width:472px; flex:0 0 472px; border-left:1px solid var(--line);
+    background:linear-gradient(180deg,#101219,#0C0D13); overflow-y:auto; padding:20px; z-index:2;
+  }
+  aside::-webkit-scrollbar{width:6px}
+  aside::-webkit-scrollbar-thumb{background:#2A2E3A; border-radius:3px}
+
+  @keyframes reveal{from{opacity:0; transform:translateY(9px)}to{opacity:1; transform:none}}
+  .reveal{animation:reveal .44s cubic-bezier(.22,1,.36,1) both}
+  @keyframes popin{from{opacity:0; transform:scale(.94)}to{opacity:1; transform:none}}
+  .popin{animation:popin .5s cubic-bezier(.22,1,.36,1) both}
+
+  .kicker{font-size:11.5px; letter-spacing:2px; color:var(--t3)}
+  .p-title{font-size:19px; font-weight:500; margin:8px 0 4px; line-height:1.45; letter-spacing:.3px}
+  .p-origin{font-size:13.5px; color:var(--t2); margin:0 0 14px; line-height:1.75}
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px}
+  .tag{font-size:11.5px; color:var(--t2); border:1px solid var(--line); border-radius:6px; padding:3px 8px}
+  .sec{margin:18px 0 8px; font-size:12px; color:var(--t3); letter-spacing:1px}
+  .bar-row{display:flex; align-items:center; gap:10px; margin:7px 0}
+  .bar-name{width:82px; font-size:12px; color:var(--t2); flex:0 0 82px; text-align:right}
+  .bar-track{flex:1; height:6px; background:#1C1F29; border-radius:3px; overflow:hidden}
+  .bar-fill{height:100%; border-radius:3px}
+  .bar-num{width:22px; font-size:12px; color:var(--t3); text-align:right; flex:0 0 22px}
+  .diff-tb{width:100%; border-collapse:collapse; font-size:13px; margin-top:4px}
+  .diff-tb th{text-align:left; color:var(--t3); font-weight:400; padding:5px 6px; border-bottom:1px solid var(--line)}
+  .diff-tb td{padding:7px 6px; border-bottom:1px solid #1C1F29; color:var(--t2); vertical-align:top}
+  .diff-tb td.dim{color:var(--t1); white-space:nowrap}
+  .diff-tb td.mine{color:var(--gold)}
+  .moves{margin:0; padding:0; list-style:none}
+  .moves li{position:relative; padding:9px 0 9px 24px; font-size:13.5px; color:var(--t2); border-bottom:1px solid #1C1F29; line-height:1.7}
+  .moves li:last-child{border-bottom:0}
+  .moves li:before{content:""; position:absolute; left:6px; top:15px; width:6px; height:6px; border-radius:50%; background:var(--gold)}
+  .moves li b{color:var(--t1); font-weight:500; display:block; margin-bottom:2px; font-size:13px}
+  .stat-line{display:flex; gap:18px; margin:12px 0 4px}
+  .stat{flex:1}
+  .stat b{display:block; font-size:22px; font-weight:500; color:var(--t1); line-height:1.2}
+  .stat span{font-size:11.5px; color:var(--t3)}
+  .verified{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; padding:3px 9px; border-radius:999px; margin-bottom:10px}
+  .verified.ok{color:#7FD1A4; background:rgba(111,207,151,.1); border:1px solid rgba(111,207,151,.25)}
+  .verified.draft{color:var(--t3); background:#171A22; border:1px solid var(--line)}
+  .peer{font-size:13.5px; color:var(--t2); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-top:14px}
+  .peer b{color:var(--gold); font-weight:500}
+  .hint{font-size:13.5px; color:var(--t3); line-height:1.9}
+
+  /* 星详情：四大板块 */
+  .np-head{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .np-head .verified{margin-bottom:0}
+  .back-btn{margin-left:auto; padding:5px 11px; border:1px solid var(--line); border-radius:8px;
+    background:transparent; color:var(--t2); font-size:12px; cursor:pointer; font-family:inherit; transition:.16s}
+  .back-btn:hover{color:var(--t1); border-color:#3F4553; background:#171A22}
+  .back-btn:active{transform:translateY(1px)}
+  .sub{font-size:11.5px; color:var(--t3); letter-spacing:.5px; margin:14px 0 6px}
+  .p-prob{font-size:13.5px; color:var(--t2); line-height:1.85; margin:0;
+    border-left:2px solid #5B9BD5; padding:2px 0 2px 12px}
+  .resolved{font-size:13px; border-radius:9px; padding:11px 13px; margin:4px 0 0; line-height:1.75; border:1px solid var(--line)}
+  .resolved.ok{color:#9BE8B8; background:rgba(111,207,151,.08); border-color:rgba(111,207,151,.28)}
+  .resolved.ok b{color:#7FD1A4}
+  .resolved.no{color:#F0A79E; background:rgba(224,121,110,.08); border-color:rgba(224,121,110,.28)}
+  .resolved.no b{color:#E0796E}
+  .tried{margin:8px 0 0; padding:0; list-style:none}
+  .tried li{position:relative; padding:7px 0 7px 22px; font-size:13px; color:var(--t2); border-bottom:1px solid #1C1F29; line-height:1.65}
+  .tried li:last-child{border-bottom:0}
+  .tried li:before{content:""; position:absolute; left:5px; top:13px; width:6px; height:6px; border-radius:50%; background:#E0796E}
+  .ai-summary{font-size:13.5px; color:var(--t1); background:#0E1016; border:1px solid var(--line);
+    border-left:3px solid var(--gold); border-radius:8px; padding:12px 14px; line-height:1.85; margin-top:2px; white-space:pre-wrap}
+  .help-log{margin-top:4px}
+  .help-item{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid #1C1F29}
+  .help-item:last-child{border-bottom:0}
+  .hi-dot{width:8px; height:8px; border-radius:50%; margin-top:6px; flex:0 0 8px; background:var(--gold); box-shadow:0 0 6px var(--gold)}
+  .hi-body{font-size:13px; color:var(--t2); line-height:1.7}
+
+  /* 反馈闭环 UI */
+  .fb-row{display:flex; gap:10px; margin:16px 0 6px}
+  .fb-btn{flex:1; padding:11px 10px; border-radius:10px; border:1px solid var(--line); background:#171A22; color:var(--t1); font-size:13.5px; cursor:pointer; font-family:inherit; transition:.2s}
+  .fb-btn.solve{border-color:#6FCF97; color:#9BE8B8}
+  .fb-btn.solve:hover{background:rgba(111,207,151,.14)}
+  .fb-btn.unsolve{border-color:#E0796E; color:#F0A79E}
+  .fb-btn.unsolve:hover{background:rgba(224,121,110,.14)}
+  .fb-note{font-size:13px; color:#7FD1A4; margin:6px 0 4px}
+  .flow{border-left:2px solid var(--gold); padding:6px 0 6px 14px; margin:12px 0}
+  .flow h4{margin:0 0 6px; font-size:14px; color:var(--gold); font-weight:500}
+  .flow p{margin:0 0 10px; font-size:13.5px; color:var(--t2); line-height:1.8}
+  .chk{display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--t2); margin:7px 0; line-height:1.6}
+  .chk input{margin-top:3px; accent-color:#6FCF97; flex:0 0 auto}
+  .help-btns{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+  .chip-btn{padding:8px 13px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--t2); font-size:12.5px; cursor:pointer; font-family:inherit; transition:.2s}
+  .chip-btn:hover{color:var(--t1); border-color:#3F4553; background:#171A22}
+  .help-box{width:100%; height:148px; background:#0E1016; border:1px solid var(--line); border-radius:8px; color:var(--t2); font:12.5px/1.7 ui-monospace,Menlo,Consolas,monospace; padding:11px; resize:none; margin-top:4px}
+  .copy-btn{margin-top:8px; padding:8px 14px; border:1px solid var(--gold); border-radius:8px; background:transparent; color:var(--gold); font-size:12.5px; cursor:pointer; font-family:inherit}
+  .copy-btn:hover{background:var(--gold); color:#1A1508}
+
+  footer{
+    border-top:1px solid var(--line); padding:10px 22px; display:flex; align-items:center;
+    gap:26px; flex-wrap:wrap; background:rgba(10,11,15,.7); font-size:11.5px; color:var(--t3);
+  }
+  .lg{display:flex; align-items:center; gap:7px}
+  .lg i{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--gold)}
+  .lg.solid i{background:var(--gold)}
+  .lg.hollow i{background:transparent; border:1.5px solid var(--gold)}
+  .lg small{color:var(--t3)}
+
+  .toast{
+    position:absolute; left:50%; bottom:26px; transform:translateX(-50%) translateY(14px); z-index:5;
+    background:rgba(231,184,115,.12); border:1px solid rgba(231,184,115,.4); color:var(--gold);
+    padding:9px 18px; border-radius:999px; font-size:13px; opacity:0; transition:.35s;
+    pointer-events:none; backdrop-filter:blur(4px); white-space:nowrap;
+  }
+  .toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  /* --- svg 星辰图 --- */
+  .orbit{fill:none; stroke-width:1; opacity:.16; stroke-dasharray:2 8}
+  .ray{fill:none; stroke-width:1; opacity:.30}
+  .ray.hot{opacity:.95; stroke-width:1.9}
+  .xlink{stroke:#39414F; stroke-width:1; opacity:.28; stroke-dasharray:3 5}
+  .node{cursor:pointer}
+  .pop{transform:scale(var(--s,1)); transform-box:fill-box; transform-origin:center; transition:transform .2s cubic-bezier(.34,1.4,.64,1), filter .25s ease}
+  .node.on .pop{filter:drop-shadow(0 0 5px var(--nc)) drop-shadow(0 0 11px var(--nc))}
+  .star{stroke-linejoin:round; filter:drop-shadow(0 0 4px var(--nc)); pointer-events:all}
+  .nhit{pointer-events:all; cursor:pointer}
+  .star.on{filter:drop-shadow(0 0 7px var(--nc)) drop-shadow(0 0 13px var(--nc))}
+  .node.on .star{filter:drop-shadow(0 0 9px var(--nc)) drop-shadow(0 0 18px var(--nc))}
+  .star.tw{animation:tw 4.5s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:1}50%{opacity:.78}}
+  .node.on .lbl{font-size:14px; fill:#FFF; stroke-width:6}
+  .lbl{font-size:12.5px; font-weight:500; letter-spacing:.3px; fill:#D6D2C9; paint-order:stroke; stroke:#0A0B0F; stroke-width:5; stroke-linejoin:round; transition:fill .2s}
+  .node-detail{font-size:10.5px; fill:#6B6862; paint-order:stroke; stroke:#0A0B0F; stroke-width:4.5; stroke-linejoin:round}
+  .sun-glow{opacity:.92}
+  .varc{transition:stroke-dashoffset .6s ease; filter:drop-shadow(0 0 4px #E7B873)}
+  .core-title{font-size:17.5px; font-weight:600; letter-spacing:.4px; fill:#F5F2EB}
+  .core-sub{font-size:12.5px; fill:#8B877F}
+  .core-num{font-size:13px; fill:var(--gold); font-weight:600}
+  .core-hint{font-size:11px; fill:#6B6862; letter-spacing:.5px}
+  #corehit{cursor:pointer}
+  .origin-chip{font-size:11px; fill:#948F86}
+  .origin-box{fill:#141620; stroke:#2A2E3A; stroke-width:1}
+  @keyframes ripple{0%{r:6;opacity:.6}100%{r:54;opacity:0}}
+  .ripple{fill:none; stroke:var(--gold); stroke-width:1.6; animation:ripple 1.1s ease-out forwards}
+
+  #web{cursor:grab; touch-action:none}
+  #web.grabbing{cursor:grabbing}
+  .zoombar{position:absolute; right:18px; bottom:18px; display:flex; flex-direction:column; gap:8px; z-index:5}
+  .zoombar button{
+    width:36px; height:36px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(20,22,32,.85); color:var(--t2); font-size:16px; line-height:1;
+    cursor:pointer; backdrop-filter:blur(6px); transition:.18s; font-family:inherit; padding:0;
+  }
+  .zoombar button.sm{font-size:11px}
+  .zoombar button:hover{color:var(--t1); border-color:#3F4553; background:rgba(32,35,46,.9)}
+  .zoomtag{position:absolute; left:18px; bottom:18px; font-size:11.5px; color:var(--t3); border:1px solid var(--line); border-radius:999px; padding:5px 13px; background:rgba(20,22,32,.72); backdrop-filter:blur(6px); letter-spacing:.5px; z-index:5}
+  .zoomtag b{color:var(--gold); font-weight:500}
+  .hintbar{position:absolute; left:18px; top:16px; font-size:11.5px; color:var(--t3); line-height:1.9; pointer-events:none; z-index:5}
+  .hintbar b{color:var(--t2); font-weight:400}
+
+  svg.lod1 .nfix, svg.lod1 .node-detail{display:none}
+  svg.lod1 .node.on .lbl{display:inline}
+  svg.lod2 .node-detail{display:none}
+  svg.locked .node:not(.on){opacity:.42; transition:opacity .38s ease}
+  svg.locked .ray:not(.hot){opacity:.05}
+  svg.locked .orbit{opacity:.04}
+  svg.locked .xlink{opacity:.03}
+  svg.locked .sun-glow{opacity:.25}
+  svg.locked .corec{opacity:.18}
+  svg.locked .fix{opacity:.25}
+  svg.lod3 .nfix{opacity:1}
+</style>
+</head>
+<body data-page-node-id="wjnn1wSAdGRedw3WaJrBl0">
+<div class="app" data-page-node-id="9Dd3XG4ET92ftEBDDPJkRI">
+  <header data-page-node-id="cGd1yzrPGCpqdE9RFvoM6v">
+    <div class="brand" data-page-node-id="CFeqF6cIwnns1GW4s7nDoH">场景<b data-page-node-id="2uulRkhgML3Z2hEnEtQIRI">炼金师</b> · 星辰图</div>
+    <div class="posts" id="posts" data-page-node-id="hu2fUHIc2ESVVpIc9B6OtV"></div>
+    <div class="spacer" data-page-node-id="cIB3wMdwgcG8Jn5QfW8PHr"></div>
+    <button class="browse-btn" id="browse" data-page-node-id="bRoWsE01xQz7pKdM5LtVnA">已收录场景 <b id="bcount">0</b></button>
+    <button class="grow-btn" id="grow" data-page-node-id="GejMKtAFxZm05b91cGx4v0">+ 加入我的场景</button>
+  </header>
+
+  <main data-page-node-id="8fr3tIDqfkMvm4ebJvZ4BM">
+    <section class="stage" data-page-node-id="ad3p73BL3HGk8WPyevAIhg">
+      <div class="space" data-page-node-id="B5e48n81MjWNMEDFWUbaRw"><svg class="bgstars" id="bgstars" preserveAspectRatio="xMidYMid slice" data-page-node-id="DZV2sFwq3vHeC2uqwH3wlZ"></svg></div>
+      <svg id="web" viewBox="0 0 900 790" preserveAspectRatio="xMidYMid meet" data-page-node-id="aG8MUTJgbiG8fzRmKYDR1D"></svg>
+      <div class="hintbar" data-page-node-id="XfQ8WS95zMRyIutCRRwplb">滚轮缩放　拖拽平移<br data-page-node-id="fiZucwNY0VqMDBi8hV6Afk"><b data-page-node-id="RAMhSrmnygjvvM9pmECBFs">单击星 → 视角拉近到该星并看详情；再单击同星 / 点「返回星空」→ 回到全局；点太阳 → 看原帖；右上「已收录场景」→ 按列表浏览别人的处境</b></div>
+      <div class="zoomtag" id="ztag" data-page-node-id="BRPoZaJlCQhFsOsn0FqiKm">星图 · 1.0x</div>
+      <div class="zoombar" data-page-node-id="q6wGH714rx01z6s5Pw0iwQ">
+        <button id="zin" title="放大" data-page-node-id="f3auAAq6pzTlcwEJmq0K2W">+</button>
+        <button id="zout" title="缩小" data-page-node-id="ltwuAvbjP6b4Azfxn0NYLB">−</button>
+        <button id="zfit" class="sm" title="复位" data-page-node-id="hNsXgZrPom3ecgGPoPyCcA">复位</button>
+      </div>
+      <div class="toast" id="toast" data-page-node-id="N3t2ARb95CFgeKQqLMjkno"></div>
+    </section>
+    <aside id="panel" data-page-node-id="DDXRGDejWaWk2ktbZf9L7v"></aside>
+  </main>
+
+  <footer data-page-node-id="MwY3dAU1EV5kcRBX1rMuPI">
+    <span class="lg" data-page-node-id="tcZNjbASTDgHhJjLqEqPQE"><i style="background:#6FCF97" data-page-node-id="bx3J5FjODdFY444UWnZUhM"></i>绿＝小改参数</span>
+    <span class="lg" data-page-node-id="un4iGYZFjh75GRlORNmcAH"><i style="background:#E7B873" data-page-node-id="8KatSEXNV8r7QmO9Q2ngPf"></i>金＝动结构</span>
+    <span class="lg" data-page-node-id="ngw0JuMxJsxaOHBTAL9CXB"><i style="background:#E0796E" data-page-node-id="hUr476f4lgmvMalRvNOVC0"></i>红＝换方案</span>
+    <span class="lg solid" data-page-node-id="BOciLlxDL3riu7iaR1UGEd"><i data-page-node-id="SBC6hnnlUvoCbro6qKRaFm"></i>亮星＝已验证</span>
+    <span class="lg hollow" data-page-node-id="42nSzdQgVeEG1HyFAHBge4"><i data-page-node-id="RNzDZSHmrGJqY49Qh48Usr"></i>暗星＝待验证</span>
+    <span class="lg" data-page-node-id="uxe0edDmKnE8eQe11jt57w"><i style="width:6px;height:6px" data-page-node-id="1LpZlMZDj22Ej7gOuM5atT"></i><small data-page-node-id="VdbEEZU00CvFMcv3Vaw64V">星小</small><i style="width:11px;height:11px" data-page-node-id="C2KxxzYF0yYWrC4bpCuDdN"></i><small data-page-node-id="pEacO8fGHbjsyYo4eqBDHy">星大＝相似的人更多</small></span>
+  </footer>
+
+  <div class="drawer" id="drawer" data-page-node-id="dRaWeR9mQ2xLpK7vN3tBsC">
+    <div class="drawer-hd" data-page-node-id="dRaWeRHd7k2LpK7vN3tB001">
+      <div>
+        <div class="dt">已收录场景</div>
+        <div class="ds" id="dsub">同一个原帖，别人趟过的真实处境</div>
+      </div>
+      <button class="dclose" id="dclose" title="收起" data-page-node-id="dRaWeRCl2k2LpK7vN3tB002">✕</button>
+    </div>
+    <div class="drawer-list" id="dlist" data-page-node-id="dRaWeRLs3k2LpK7vN3tB003"></div>
+  </div>
+</div>
+
+<script>
+const CX=440, CY=400, RING={1:128, 2:228, 3:320}, START=-104, GAP=8, SQUASH=0.46;
+
+const POSTS=[
+{id:'p1', title:'STM32 串口通信踩坑全记录：从丢字节到稳定收发',
+ origin:'原帖场景　STM32F103 电子秤 · 单串口 9600 接称重模块 · 中断内逐字节拼帧',
+ tags:['单串口','9600 低速率','单设备','中断拼帧'],
+ sectors:[
+  {name:'速率 / 并发', color:'#E7B873', scenes:[
+   {n:'智能车双串口', d:3, h:.95, v:1, peers:6,
+    sit:'主控 MSPM0G3507，两路串口同时收摄像头 115200 持续流与蓝牙 9600 指令，不能换主控，工期 3 天',
+    diffs:[['设备数量','单串口单设备','双串口并发','单中断拼帧会互相阻塞'],['速率','9600','115200 持续流','逐字节中断过频导致丢帧']],
+    moves:[['双串口资源分治','UART0 摄像头 115200、UART1 蓝牙 9600，各配 256B 独立环形缓冲'],
+           ['DMA 循环 + IDLE 整帧','DMA 循环接收，IDLE 空闲中断判定整帧，主循环取帧，中断频率降一个数量级'],
+           ['ORE 溢出自恢复','溢出标志先清后读，避免锁死；ISR 只入队，协议解析放主循环']]},
+   {n:'四路采集网关', d:3, h:.7, v:1, peers:3,
+    sit:'工业网关需同时收 4 路 485 转串口的传感器数据，每路 38400，主循环不能被拖死',
+    diffs:[['通道数','1 路','4 路并发','单缓冲必然覆盖'],['吞吐',' sporadic','持续 4×38400','CPU 全耗在中断']],
+    moves:[['统一 IDLE + 队列','四路各自 DMA，帧就绪后推同一队列'],['主循环批量消费','一次循环处理完队列，避免中断嵌套'],['超时补帧','半帧超过 20ms 强制收口，防死锁']]},
+   {n:'921600 高速日志', d:3, h:.52, v:0, peers:2,
+    sit:'设备需把运行日志以 921600 实时吐给上位机，不能丢行',
+    diffs:[['速率','9600','921600','中断完全不可行'],['数据量','偶发几字节','持续 KB 级','缓冲区瞬间打满']],
+    moves:[['DMA 双缓冲乒乓','半满/全满中断切换，CPU 只做搬运'],['批量刷写','攒够 512B 再发，减少协议开销'],['背压丢弃策略','缓冲满时丢旧不丢新，并记录丢包计数']]},
+   {n:'双机串口透传', d:2, h:.38, v:0, peers:1,
+    sit:'两块 MCU 之间 115200 互传，速率中等但要求零配置',
+    diffs:[['拓扑','点对点单收','双向透传','收发角色固定会卡死']],
+    moves:[['收发分离缓冲','TX/RX 各自环形缓冲'],['硬件流控 RTS/CTS','缓冲将满时拉高 RTS 暂停对端']]},
+   {n:'57600 够用', d:1, h:.3, v:1, peers:9,
+    sit:'其实我的设备只有 57600，原帖方案基本能照搬',
+    diffs:[['速率','9600','57600','中断次数可控，结构不用改']],
+    moves:[['仅调波特率分频','改 BRR 即可'],['加大缓冲到 128B','留余量防偶发突发']]}]},
+
+  {name:'供电 / 功耗', color:'#6FCF97', scenes:[
+   {n:'电池水表微安级', d:3, h:.92, v:1, peers:5,
+    sit:'电池供电远传水表，STM32L 系列单串口接 MBus，每天只上报几次，整机要求微安级休眠，成本敏感',
+    diffs:[['供电方式','市电常供','电池，微安级预算','串口常开直接耗死电池'],['通信频次','连续','每天几次','绝大部分时间串口是负担']],
+    moves:[['深度休眠 + RTC 唤醒','STOP 模式，RTC 定时唤醒上报'],['收一帧即关','RX 引脚唤醒，收完整帧立刻关串口回休眠'],
+           ['降波特率换距离','2400 即可，同时降低误码与功耗']]},
+   {n:'太阳能气象站', d:2, h:.62, v:1, peers:2,
+    sit:'太阳能+锂电供电，每 10 分钟唤醒上传一次气象数据',
+    diffs:[['供电','常供','间歇补能','需按电量自适应'],['频次','连续','10 分钟一次','批量发送更省']],
+    moves:[['定时唤醒批量发','一次发完全部缓存数据'],['低电量降频','电压低于阈值自动延长上报间隔']]},
+   {n:'纽扣电池节点', d:3, h:.48, v:0, peers:1,
+    sit:'CR2032 供电的无线传感节点，串口只用于产线校准',
+    diffs:[['供电','常供','225mAh 一次性','任何常开外设都致命']],
+    moves:[['串口仅校准时开','出厂后彻底关闭时钟'],['引脚中断唤醒','只在插入校准器时上电 UART']]},
+   {n:'USB 供电但怕热', d:1, h:.32, v:0, peers:2,
+    sit:'USB 供电，但外壳密闭，MCU 温升不能超过 15℃',
+    diffs:[['散热','无约束','密闭无风道','CPU 满载即发热']],
+    moves:[['降低中断频率','改 DMA 后 CPU 占用从 60% 降到 8%'],['空闲进 Sleep','主循环无事时 WFI']]}]},
+
+  {name:'物理层 / 抗干扰', color:'#5B9BD5', scenes:[
+   {n:'RS485 现场总线', d:3, h:.86, v:1, peers:4,
+    sit:'工厂现场，32 个节点挂在 1200m 的 RS485 总线上，电机启停干扰严重',
+    diffs:[['物理层','TTL 电平板内','差分长线 1200m','电平与拓扑完全不同'],['抗干扰','实验室','电机/继电器干扰','误码率数量级上升']],
+    moves:[['隔离收发器 + 终端电阻','两端 120Ω 匹配，加 TVS'],['CRC 重传','每帧带 CRC16，错帧自动重传'],
+           ['按距离反选波特率','1200m 降到 9600 以下，先保可靠']]},
+   {n:'电机旁长线串口', d:2, h:.58, v:1, peers:3,
+    sit:'串口线从电控柜拉到 3m 外的电机驱动器旁边',
+    diffs:[['距离','板内 10cm','3m 强电旁','共模干扰耦合']],
+    moves:[['转差分或加磁环','TTL 转 RS422 最省事'],['屏蔽层单点接地','避免地环路']]},
+   {n:'电梯井道强干扰', d:3, h:.44, v:0, peers:1,
+    sit:'井道内变频器环境，通讯偶发乱码',
+    diffs:[['干扰源','无','变频器高频','偶发乱码难复现']],
+    moves:[['光耦隔离 + 软件滤波','连续 3 帧校验通过才采信'],['看门狗兜底','通讯异常自动复位 UART']]},
+   {n:'4~20mA 工业现场', d:3, h:.36, v:0, peers:1,
+    sit:'需要串口与 4~20mA 变送器共存于同一防爆壳内',
+    diffs:[['安规','消费级','防爆 + 本安','不能随便加器件']],
+    moves:[['全隔离设计','电源与信号双隔离'],['限能电路','串阻限流满足本安要求']]}]},
+
+  {name:'成本 / 器件', color:'#C58BE0', scenes:[
+   {n:'换国产 CH32', d:2, h:.68, v:1, peers:4,
+    sit:'供应链原因必须换成 CH32V 系列，代码要尽量复用',
+    diffs:[['器件','STM32F103','CH32V 系列','寄存器与库函数名不同'],['DMA','有','有但通道映射不同','需重排通道']],
+    moves:[['抽象一层串口驱动','隔离寄存器差异'],['DMA 通道重映射','对照表逐个替换'],['实测波特率误差','不同主频下重新算 BRR']]},
+   {n:'无 DMA 的 8 位机', d:3, h:.58, v:0, peers:2,
+    sit:'只能用 8 位 MCU，没有 DMA，RAM 只有 512B',
+    diffs:[['DMA','有','没有','原帖核心手段失效'],['RAM','足够','512B','缓冲放不下整帧']],
+    moves:[['中断 + 小环形缓冲','64B 环形，边收边解析状态机'],['降波特率','9600 降到 4800 争取处理时间']]},
+   {n:'串口引脚需复用', d:2, h:.46, v:0, peers:1,
+    sit:'串口引脚同时要用作普通 IO 和下载口',
+    diffs:[['引脚','专用','分时复用','切换时会有毛刺']],
+    moves:[['分时复用 + 握手','切换前后各发一次同步字节'],['重映射优先','能重映射就别复用']]},
+   {n:'BOM 压到 3 元', d:1, h:.3, v:0, peers:2,
+    sit:'极致成本，能砍的芯片全砍',
+    diffs:[['成本','不敏感','每分钱都要算','电平转换芯片想砍掉']],
+    moves:[['去掉电平转换','两端同为 3.3V 时直连，串 100Ω'],['软件代替硬件','校验与重试放软件']]}]},
+
+  {name:'工期 / 维护', color:'#E0796E', scenes:[
+   {n:'竞赛 3 天交付', d:2, h:.78, v:1, peers:7,
+    sit:'智能车竞赛，只剩 3 天，改动越大风险越大',
+    diffs:[['工期','充裕','3 天','不敢重构整体架构'],['验证','充分','边调边比','需要能快速回退']],
+    moves:[['最小侵入改动','只替换接收部分，保持上层接口不变'],['保留旧路径开关','宏开关切回中断模式便于对比']]},
+   {n:'老项目接手维护', d:2, h:.52, v:0, peers:3,
+    sit:'接手别人写的代码，没有文档，不敢大改',
+    diffs:[['可维护性','自己写的','陌生代码','改动面越大越危险']],
+    moves:[['先加日志再改','把接收路径打点后再动手'],['局部替换 + 回归测试','只换接收层，跑老用例']]},
+   {n:'量产 OTA 兼容', d:3, h:.42, v:0, peers:1,
+    sit:'已量产 2 万台，OTA 时新旧固件通讯协议要兼容',
+    diffs:[['兼容性','单版本','新旧共存','协议变更会击穿老设备']],
+    moves:[['协议带版本号','两端协商后选帧格式'],['双区备份 OTA','失败自动回滚']]}]}
+ ],
+ originDetail:{
+  scene:'作者在做 STM32F103 电子秤项目，单串口以 9600 波特率接称重模块，一个设备、一次几字节、没有并发。',
+  solution:['USART1 初始化 9600 8N1，开接收中断',
+            '在中断里逐字节拼帧，凑齐一帧后置标志位',
+            '主循环轮询标志，解析重量数据并送显示'],
+  params:{'主控':'STM32F103','波特率':'9600','数据位 / 校验':'8 / 无','接收方式':'字节中断','设备数':'1'},
+  boundaries:'只适用于单设备、低速率、无持续流的场景。一旦出现多路并发或高速持续流，逐字节中断会互相阻塞并丢帧，必须改成 DMA 循环接收 + IDLE 空闲中断 + 独立环形缓冲。'
+ },
+ cross:[['智能车双串口','竞赛 3 天交付'],['电池水表微安级','BOM 压到 3 元'],
+        ['RS485 现场总线','电梯井道强干扰'],['换国产 CH32','无 DMA 的 8 位机']]
+},
+
+{id:'p2', title:'PCB 电源线宽到底怎么算？大电流主板布线实例',
+ origin:'原帖场景　4 层板 · 1oz 铜厚 · 12V 输入 · 电机峰值 5A · 常规 FR-4',
+ tags:['4 层板','1oz 铜厚','12V / 5A','自然散热'],
+ sectors:[
+  {name:'电流 / 散热', color:'#E7B873', scenes:[
+   {n:'电机峰值 20A', d:3, h:.88, v:1, peers:5,
+    sit:'智能车 4 层电源板，12V 输入，电机峰值 20A，空间紧张',
+    diffs:[['电流','5A','20A','线宽不是线性放大'],['散热','自然','密闭无风','温升直接翻倍']],
+    moves:[['按 IPC-2221 反算','20A/1oz/温升10℃需约 15mm 外层'],['开窗加锡','阻焊开窗镀锡等效加厚'],['双面并联过孔','顶底同网络铺铜并联']]},
+   {n:'持续 8A 长时', d:2, h:.6, v:1, peers:3,
+    sit:'设备 24 小时连续跑 8A，温度不能超 60℃',
+    diffs:[['工况','间歇','持续','热积累不可忽略']],
+    moves:[['按持续电流降额','取 1.5 倍余量'],['增加散热过孔阵列','把热导到内层地']]},
+   {n:'瞬态 50A 冲击', d:3, h:.4, v:0, peers:1,
+    sit:'电机启动瞬间 50A 冲击，持续 20ms',
+    diffs:[['波形','稳态','50A/20ms','按平均值算会烧断']],
+    moves:[['按能量校核','I²t 不超过铜箔熔断阈'],['就近加大电容','让瞬态由电容供']]}]},
+  {name:'层数 / 叠层', color:'#6FCF97', scenes:[
+   {n:'只能做 2 层板', d:3, h:.7, v:1, peers:4,
+    sit:'成本限制只能做 2 层，原帖的 4 层叠层方案完全用不上',
+    diffs:[['层数','4 层','2 层','没有完整地平面散热差']],
+    moves:[['整面铺铜代替地层','底层大面积铺电源/地'],['线宽再放大 30%','补偿散热能力下降']]},
+   {n:'2oz 加厚铜', d:2, h:.5, v:0, peers:2,
+    sit:'可以做 2oz 铜厚但线宽受限',
+    diffs:[['铜厚','1oz','2oz','载流能力接近翻倍']],
+    moves:[['重算线宽','同样电流线宽可减半'],['注意蚀刻精度','2oz 细线工艺能力下降']]},
+   {n:'6 层带独立电源层', d:1, h:.35, v:1, peers:2,
+    sit:'项目升级到 6 层，有独立电源层',
+    diffs:[['层数','4 层','6 层','电源层本身即大面积铜']],
+    moves:[['电源层直接载流','过孔阵列连接即可'],['重点算过孔数量','瓶颈转移到过孔']]}]},
+  {name:'空间 / 密度', color:'#5B9BD5', scenes:[
+   {n:'BGA 底下走电源', d:3, h:.55, v:0, peers:2,
+    sit:'电源要从 0.4mm pitch BGA 底下扇出',
+    diffs:[['空间','充裕','BGA 扇出区','线宽被焊盘间距锁死']],
+    moves:[['用多层并联','每层各走一段再汇合'],['改盲埋孔','代价高但唯一解']]},
+   {n:'板型细长', d:2, h:.4, v:0, peers:1,
+    sit:'板子必须做成 10mm 宽的长条',
+    diffs:[['形状','常规','细长条','无法铺大面积铜']],
+    moves:[['顶层底层都走','并行降低等效电阻'],['牺牲温升要求','接受 30℃ 温升']]},
+   {n:'连接器限宽', d:2, h:.3, v:0, peers:1,
+    sit:'电源只能过一个 2mm 间距的端子',
+    diffs:[['瓶颈','走线','端子载流','端子成了短板']],
+    moves:[['多针并联','4 针并 2 针'],['换更大端子','从源头解决']]}]},
+  {name:'工艺 / 成本', color:'#C58BE0', scenes:[
+   {n:'打样费敏感', d:1, h:.45, v:1, peers:3,
+    sit:'学生打样，不想加钱做特殊工艺',
+    diffs:[['工艺','可选','只能用常规','开窗加锡可能被拒']],
+    moves:[['纯靠线宽解决','按常规工艺反算'],['用嘉立创免费参数','贴合厂商能力设计']]},
+   {n:'要过 UL 认证', d:3, h:.35, v:0, peers:1,
+    sit:'产品要出口，需过安规',
+    diffs:[['认证','无','UL / CE','电气间隙有硬指标']],
+    moves:[['按安规表取间距','不能只按载流算'],['加保险丝与标识','安规要求的可追溯']]}]},
+  {name:'安规 / 可靠', color:'#E0796E', scenes:[
+   {n:'车载 12V 抛负载', d:3, h:.5, v:0, peers:2,
+    sit:'车载环境，要扛住抛负载与反接',
+    diffs:[['环境','室内','车载','瞬态高压'],['可靠性','一般','零失效','单电源路径不可接受']],
+    moves:[['TVS + 防反接','前端保护'],['降额设计','按 60% 载流取']]},
+   {n:'高湿盐雾环境', d:2, h:.3, v:0, peers:1,
+    sit:'户外海边设备，担心电化学迁移',
+    diffs:[['环境','常规','盐雾高湿','细间距会枝晶生长']],
+    moves:[['加大线与线间距','≥0.3mm'],['三防漆','隔绝湿气']]}]}
+ ],
+ originDetail:{
+  scene:'作者在设计一块 4 层电源板，12V 输入，电机峰值电流 5A，内层 1oz 铜厚，自然散热，空间不紧张。',
+  solution:['按 IPC-2221 载流表反算外层线宽',
+            '外层走电源路径、内层完整铺地兼做散热',
+            '大电流路径用多个过孔并联降低等效电阻'],
+  params:{'层数':'4 层','铜厚':'1oz','输入电压':'12V','峰值电流':'5A','允许温升':'10℃'},
+  boundaries:'只适用于温升 10℃、自然散热的常规条件。密闭机壳、持续满载或电流显著增大时必须重新降额，线宽不能按电流比例直接放大。'
+ },
+ cross:[['电机峰值 20A','BGA 底下走电源'],['只能做 2 层板','要过 UL 认证']]
+},
+
+{id:'p3', title:'六轴机械臂运动学入门：我的第一个逆解程序',
+ origin:'原帖场景　桌面级六轴 · 几何法解析逆解 · 负载 500g · 无实时性要求',
+ tags:['六轴','几何法','500g 负载','离线计算'],
+ sectors:[
+  {name:'构型 / 自由度', color:'#E7B873', scenes:[
+   {n:'四轴 SCARA', d:3, h:.8, v:1, peers:4,
+    sit:'实际是 SCARA 四轴，原帖六轴几何法根本不适用',
+    diffs:[['自由度','6 轴','4 轴 SCARA','雅可比与解空间完全不同'],['解算','多解选择','解析闭解','反而更简单']],
+    moves:[['重写闭式解','SCARA 有标准解析式'],['只保留姿态 yaw','放弃 pitch/roll 约束']]},
+   {n:'七轴冗余臂', d:3, h:.6, v:0, peers:2,
+    sit:'七轴冗余机械臂，解不唯一',
+    diffs:[['自由度','6 轴','7 轴冗余','无穷多解需优化']],
+    moves:[['加零空间优化','避开奇异与关节限位'],['用阻尼最小二乘','数值法稳定求逆']]},
+   {n:'三轴龙门', d:2, h:.72, v:1, peers:5,
+    sit:'工厂喷胶机小型三轴龙门，步进电机、负载 1.5kg、行程 400mm',
+    diffs:[['构型','旋转关节','直角坐标','解耦，几乎无需逆解']],
+    moves:[['各轴独立映射','mm 直接换算脉冲'],['重点改加减速','梯形/S 曲线规划']]}]},
+  {name:'负载 / 刚性', color:'#6FCF97', scenes:[
+   {n:'负载 1.5kg 加长臂', d:3, h:.65, v:1, peers:3,
+    sit:'臂长加长且负载 1.5kg，末端下垂明显',
+    diffs:[['负载','500g','1.5kg','静变形导致定位偏差'],['刚性','假设刚体','柔性显著','运动学解不再等于实际位姿']],
+    moves:[['加重力补偿项','按负载力矩前馈'],['实测标定下垂量','查表修正 Z']]},
+   {n:'软体 / 柔性爪', d:3, h:.4, v:0, peers:1,
+    sit:'末端是柔性夹爪，无确定运动学',
+    diffs:[['末端','刚性','柔性','传统逆解失效']],
+    moves:[['改用视觉伺服','闭环替代开环解算']]}]},
+  {name:'精度 / 标定', color:'#5B9BD5', scenes:[
+   {n:'重复精度 0.05mm', d:3, h:.7, v:1, peers:3,
+    sit:'要求重复定位 0.05mm，原帖未做标定',
+    diffs:[['精度','毫米级','0.05mm','几何参数误差被放大']],
+    moves:[['DH 参数标定','激光跟踪仪实测辨识'],['补偿减速器回差','单向趋近定位']]},
+   {n:'零位靠限位开关', d:2, h:.5, v:0, peers:2,
+    sit:'没有绝对值编码器，每次上电撞限位回零',
+    diffs:[['回零','假设已知','限位回零','零点重复精度差']],
+    moves:[['单向回零消回差','固定方向接近开关'],['记录断电位置','电池备份多圈值']]}]},
+  {name:'算力 / 实时', color:'#C58BE0', scenes:[
+   {n:'1kHz 实时插补', d:3, h:.6, v:1, peers:2,
+    sit:'要求 1kHz 伺服周期，单片机算力有限',
+    diffs:[['实时性','离线','1kHz 硬实时','解算必须在 1ms 内']],
+    moves:[['预计算 + 查表','离线生成轨迹点'],['定点化运算','避免浮点开方']]},
+   {n:'只在 MCU 上跑', d:2, h:.45, v:0, peers:2,
+    sit:'没有上位机，全部在 STM32 上完成',
+    diffs:[['算力','PC','Cortex-M','内存与浮点受限']],
+    moves:[['简化为闭解','放弃迭代法'],['用 CMSIS-DSP','加速矩阵运算']]}]},
+  {name:'安全 / 协作', color:'#E0796E', scenes:[
+   {n:'人机协作场景', d:3, h:.5, v:0, peers:2,
+    sit:'机械臂与人同区域作业，需碰撞检测',
+    diffs:[['安全','围栏隔离','人机共存','速度力矩双限']],
+    moves:[['力矩前播 + 碰撞检测','电流突变即停'],['限制关节速度','ISO/TS 15066 约束']]},
+   {n:'奇异位形保护', d:2, h:.4, v:0, peers:1,
+    sit:'运行中会经过奇异点导致关节暴走',
+    diffs:[['奇异','未处理','路径穿越','雅可比条件数爆炸']],
+    moves:[['可操作度判据','接近奇异时降速'],['路径重规划','绕开奇异邻域']]}]}
+ ],
+ originDetail:{
+  scene:'作者在做一个桌面级六轴机械臂，用几何法求解析逆解，负载 500g，对实时性没有要求，末端按刚体处理。',
+  solution:['建立 DH 参数表，确认腕部三轴交于一点',
+            '几何法求前三轴位置闭式解',
+            '腕部解耦求后三轴姿态',
+            '在多解中按关节限位筛选可用解'],
+  params:{'构型':'六轴串联','求解方式':'几何法闭解','负载':'500g','实时性':'离线计算','末端假设':'刚体'},
+  boundaries:'依赖腕部解耦（三轴交于一点）与刚体假设。构型改变（SCARA、冗余七轴）、负载显著增大或末端柔性时闭式解不成立，需要数值法求解或加重力补偿。'
+ },
+  cross:[['四轴 SCARA','三轴龙门'],['重复精度 0.05mm','1kHz 实时插补']]
+}];
+
+/* 星详情四大板块的扩展数据（场景专属）。缺失时由下方默认生成函数按真实字段兜底。 */
+const SCENE_EXTRA={
+  '智能车双串口':{
+    prob:'两路不同速率的串口要同时跑：摄像头 115200 持续流把中断打爆，蓝牙 9600 指令偶发丢字，单中断逐字节拼帧会互相阻塞。',
+    ai:'想把原帖的单串口 9600 方案，搬进「智能车双串口」处境：主控 MSPM0G3507 不能换，要同时收摄像头 115200 持续流和蓝牙 9600 指令，工期只有 3 天。求一个不丢帧的双路并发改法。',
+    how:'用 DMA 循环接收加 IDLE 空闲中断判整帧，主循环统一取帧；两路各配 256B 独立环形缓冲，中断频率降一个数量级，彻底不丢帧。',
+    help:['AI 重写了 DMA 双缓冲加 IDLE 判帧模板，避开了中断互相阻塞','拉群对接原帖作者，确认 9600 到 115200 场景下逐字节中断不可行','第三天陪跑联调，定位到是 ORE 溢出没清导致锁死，补了自恢复']},
+  '四路采集网关':{
+    prob:'4 路 485 转串口各以 38400 持续来数，单缓冲必然被覆盖，主循环被中断拖死，数据成片丢失。',
+    ai:'原帖是单设备低频，我这里是工业网关要同时收 4 路 485 传感器（每路 38400），主循环不能被拖死。求一个能撑住 4 路并发的接收架构。',
+    how:'四路各自 DMA，帧就绪后推同一队列；主循环一次处理完队列再清，避免中断嵌套；半帧超时 20ms 强制收口防死锁。',
+    help:['AI 给出「统一队列加批量消费」的网关架构，替代原帖的单缓冲','确认 4 路 DMA 通道映射避免互相抢占','帮标定了 20ms 超时补帧阈值，消除半帧死锁']},
+  '921600 高速日志':{
+    prob:'运行日志要以 921600 实时吐给上位机，不能丢任何一行；中断完全不可行，缓冲区瞬间打满。',
+    ai:'我的设备要以 921600 把运行日志实时吐给上位机，不能丢行。原帖 9600 的方案完全不够看，求一个高速不丢行的方案。',
+    tried:['试过中断加超大缓冲，921600 下中断频率过高，CPU 占满仍丢行','试过提高波特率容错，误码率反而上升','最终确认必须上 DMA 双缓冲乒乓'],
+    help:['AI 指出中断路径在 921600 下必然失败，引导转到 DMA 乒乓','提供背压丢弃策略（丢旧不丢新加丢包计数）','正在对接做过高速日志的前辈，确认 USB 虚拟串口能否扛住']},
+  '双机串口透传':{
+    prob:'两块 MCU 之间 115200 互传，要求零配置；收发角色固定，一方缓冲满时就卡死。',
+    ai:'两块 MCU 之间要 115200 双向透传，要求零配置、即插即用。原帖是单向接收，求一个不会卡死的透传结构。',
+    tried:['试过收发共用一个缓冲，满时互相等待卡死','试过提高主频缓解，治标不治本'],
+    help:['AI 建议收发分离缓冲加硬件流控 RTS/CTS','指出零配置下必须靠流控而非提高速率','待验证：还需在真实两块板子上跑满 24 小时压力测试']},
+  '57600 够用':{
+    prob:'设备其实只有 57600，照搬原帖 9600 方案基本能用，但担心偶发突发把缓冲打爆。',
+    ai:'我的场景只有 57600，比原帖 9600 快一点但不多，想确认能不能基本照搬、最小改动。',
+    how:'只调波特率分频（改 BRR），缓冲加大到 128B 留余量，结构完全不动，半天就验证通过。',
+    help:['AI 确认速率在可控范围，只需改 BRR 分频','提醒把缓冲从 64B 提到 128B 防偶发突发','当天验证通过，原帖价值加 1']},
+  '电池水表微安级':{
+    prob:'电池供电远传水表，STM32L 单串口接 MBus，每天只上报几次，但串口常开直接耗死电池，整机要求微安级休眠。',
+    ai:'电池供电水表，STM32L 单串口接 MBus，每天只上报几次，要微安级休眠。原帖是常供，求一个不让串口拖垮续航的改法。',
+    how:'STOP 模式加 RTC 定时唤醒；RX 引脚唤醒，收完整帧立刻关串口回休眠；降波特率到 2400 同时降低误码与功耗。',
+    help:['AI 重画了「休眠为主、收一帧即关」的功耗时序','确认 RX 引脚唤醒比定时轮询更省电','帮算了 2400 波特率下的误码与功耗权衡']},
+  '太阳能气象站':{
+    prob:'太阳能加锂电，每 10 分钟唤醒上传一次；补能随天气波动，需按电量自适应。',
+    ai:'太阳能供电气象站，每 10 分钟上传一次，电量随天气波动。求一个按电量自适应的上传策略。',
+    how:'定时唤醒一次发完全部缓存；低电量自动延长上报间隔。',
+    help:['AI 设计了低电量降频逻辑','确认批量发送比零星发送更省','陪跑了一个阴雨天，验证降频后的数据完整性']},
+  '纽扣电池节点':{
+    prob:'CR2032 无线节点，串口只用于产线校准，任何常开外设都致命，待机电流必须极低。',
+    ai:'CR2032 供电的无线节点，串口只用于产线校准，出厂后要彻底关掉。原帖常供方案不适用，求一个校准时开、平时死的改法。',
+    tried:['试过上电即开串口校准，发现待机电流超标','试过降低串口时钟，仍不理想'],
+    help:['AI 建议引脚中断唤醒加校准后才上电 UART','指出出厂必须彻底关闭 UART 时钟而非仅禁用','待验证：还要测长期待机电流是否达标']},
+  'USB 供电但怕热':{
+    prob:'USB 供电但外壳密闭，MCU 温升不能超 15℃，CPU 满载即发热。',
+    ai:'USB 供电但密闭外壳，MCU 温升不能超 15℃。原帖没这约束，求一个不发热的接收方案。',
+    tried:['试过降主频，影响性能','试过间歇工作，业务不允许'],
+    help:['AI 指出 DMA 比中断大幅降 CPU 占用（60% 降到 8%）','建议空闲 WFI 进 Sleep','待验证：还要实测密闭壳内温升曲线']},
+  'RS485 现场总线':{
+    prob:'32 个节点挂 1200m RS485，电机启停干扰严重，误码率数量级上升，原帖板内 TTL 方案完全不适用。',
+    ai:'工厂现场 32 节点挂 1200m RS485，电机启停干扰严重。原帖是板内 TTL，求一个能扛长线干扰的现场总线改法。',
+    how:'隔离收发器加两端 120Ω 终端电阻加 TVS；每帧 CRC16 错帧自动重传；1200m 降到 9600 以下先保可靠。',
+    help:['AI 重画了隔离加终端匹配加 TVS 的现场方案','确认距离波特率反选曲线（1200m 降到 9600）','对接现场电工，确认接地方式避免地环路']},
+  '电机旁长线串口':{
+    prob:'串口线从电控柜拉到 3m 外电机驱动器，强电旁共模干扰耦合，误码率上升。',
+    ai:'串口线要从电控柜拉到 3m 外电机驱动器旁边，强电干扰大。求一个抗共模干扰的拉线方案。',
+    how:'TTL 转 RS422 差分最省事；屏蔽层单点接地避免地环路。',
+    help:['AI 建议直接转 RS422 差分','确认屏蔽层单点接地而不是两端接','实地测试误码率从偶发降到零']},
+  '电梯井道强干扰':{
+    prob:'井道内变频器环境，通讯偶发乱码，难复现。',
+    ai:'电梯井道里变频器干扰，通讯偶发乱码难复现。原帖实验室环境不适用，求一个稳的现场方案。',
+    tried:['试过提高波特率，误码更多','试过软件重试，偶发仍漏'],
+    help:['AI 建议光耦隔离加连续 3 帧校验通过才采信','加了看门狗兜底复位 UART','待验证：需在真实井道跑一周统计误码']},
+  '4~20mA 工业现场':{
+    prob:'串口与 4~20mA 变送器要共存于同一防爆壳，安规限制不能随意加器件。',
+    ai:'串口要和 4~20mA 变送器塞进同一防爆壳，安规限制多。原帖消费级方案不行，求一个本安合规的共存方案。',
+    tried:['试过普通隔离模块，体积超壳','试过非隔离直连，不满足本安'],
+    help:['AI 给出电源与信号双隔离设计','确认限能电路满足本安要求','待验证：还要过防爆认证机构测试']},
+  '换国产 CH32':{
+    prob:'供应链必须换 CH32V，寄存器与库函数名不同，DMA 通道映射也不同，代码要尽量复用。',
+    ai:'因供应链必须换成 CH32V 系列，代码要尽量复用。原帖 STM32 方案怎么平移过去最省事？',
+    how:'抽象一层串口驱动隔离寄存器差异；DMA 通道对照表逐个替换；不同主频下重新算 BRR。',
+    help:['AI 给出驱动抽象层模板','提供 DMA 通道映射对照表','陪跑实测了不同主频下的波特率误差']},
+  '无 DMA 的 8 位机':{
+    prob:'只能用无 DMA 的 8 位 MCU，RAM 仅 512B，原帖核心手段失效。',
+    ai:'只能用无 DMA 的 8 位机，RAM 512B。原帖的 DMA 方案完全用不上，求一个能在小 RAM 下稳收的方案。',
+    tried:['试过中断逐字节，512B 放不下整帧','试过降波特率到 4800，勉强但仍有风险'],
+    help:['AI 建议中断加 64B 小环形缓冲边收边解析状态机','确认降波特率争取处理时间','待验证：还需压测长帧稳定性']},
+  '串口引脚需复用':{
+    prob:'串口引脚要同时做普通 IO 和下载口，切换时毛刺，导致下载失败。',
+    ai:'串口引脚要同时做普通 IO 和下载口，切换时有毛刺。原帖专用引脚不适用，求一个干净的复用方案。',
+    tried:['试过直接分时复用，出现毛刺导致下载失败','试过加延时，仍有概率问题'],
+    help:['AI 建议分时复用加前后各发同步字节握手','指出能重映射就别复用','待验证：还要在不同下载器上测兼容']},
+  'BOM 压到 3 元':{
+    prob:'极致成本，想把电平转换芯片砍掉，但两端电平不一致。',
+    ai:'成本要压到 3 元，想砍掉电平转换芯片。原帖没这约束，求一个不靠硬件的转换办法。',
+    tried:['试过直连，3.3V 与 5V 混用不稳定','试过软件校验补偿，仍偶发'],
+    help:['AI 建议两端同为 3.3V 时直连串 100Ω','提供软件代替硬件的校验重试','待验证：还需小批量成本核算']},
+  '竞赛 3 天交付':{
+    prob:'智能车竞赛只剩 3 天，改动越大风险越大，不敢重构整体架构。',
+    ai:'智能车竞赛只剩 3 天，不敢大改。原帖方案怎么用最小风险的方式搬进来？',
+    how:'最小侵入改动，只替换接收部分保持上层接口不变；保留旧路径宏开关便于对比回退。',
+    help:['AI 给出最小侵入的接收层替换方案','加了宏开关保留旧路径便于回退','陪跑 3 天，边调边比确保不崩']},
+  '老项目接手维护':{
+    prob:'接手别人代码，无文档，不敢大改，但接收路径有明显坑。',
+    ai:'接手了别人写的串口代码，没文档不敢大改。原帖方案怎么安全融入？',
+    tried:['试过直接改，引入回归','试过全量重构，风险太高'],
+    help:['AI 建议先加日志再改、局部替换加回归测试','提供打点模板定位接收坑','待验证：还需跑老用例确保不回归']},
+  '量产 OTA 兼容':{
+    prob:'已量产 2 万台，OTA 时新旧固件协议要兼容，协议变更会击穿老设备。',
+    ai:'已量产 2 万台，OTA 时新旧固件通讯协议要兼容。原帖单版本方案不行，求一个向后兼容的设计。',
+    tried:['试过直接换协议，老设备掉线','试过双协议共存，体积超标'],
+    help:['AI 建议协议带版本号两端协商选帧格式','提供双区备份 OTA 失败自动回滚','待验证：还需在 2 万台中随机抽取老版本压测']},
+  'USB 转多路串口':{
+    prob:'一个 USB 转四路串口的调试器，每路速率不同，需要分时调度，否则互相打架。',
+    ai:'我做了一个 USB 转四路串口的调试器，每路速率不同。原帖是单路，求一个能分时调度的多路结构。',
+    tried:['试过轮询加优先级，高优先级通道偶尔饿死低优先级','试过各路独立缓冲，调度仍不平'],
+    help:['AI 建议分时轮询加优先级、高优先级通道先服务','确认各路波特率独立配置','待验证：还要在四路同时满载下测']},
+  '能量采集供电':{
+    prob:'从环境取电，电压不稳，MCU 频繁复位，串口状态机要能恢复。',
+    ai:'我的设备从环境取电，电压不稳 MCU 频繁复位。原帖稳定供电不适用，求一个能自恢复的方案。',
+    tried:['试过掉电前保存状态，恢复后仍有脏数据','试过慢启动，偶发握手失败'],
+    help:['AI 建议掉电前保存状态加备份寄存器','提供上电自检重同步（握手三次再收数）','待验证：还要测不同跌落曲线']},
+  '长距离 LoRa 网关':{
+    prob:'串口接 LoRa 模块，数据包长且到达不规律，定长缓冲不够。',
+    ai:'我的串口接 LoRa 模块，数据包长且到达不规律。原帖短帧不适用，求一个变长包解析方案。',
+    tried:['试过定长缓冲，长包截断','试过加大缓冲，仍偶发溢出'],
+    help:['AI 建议动态长度帧解析（先收长度字节再定长）','确认 LoRa 端速率与串口匹配','待验证：还要测不规律到达下的完整性']},
+  '车规级 MCU':{
+    prob:'换到车规 MCU，外设时钟树不同，波特率误差要重算。',
+    ai:'我换到了车规 MCU，外设时钟树不同。原帖消费级的波特率配置不适用，求一个正确配置方法。',
+    tried:['试过照搬原 BRR，误码率偏高','试过降低波特率，仍不理想'],
+    help:['AI 建议重算波特率误差（按新时钟树配置 BRR）','提供时钟树核对清单','待验证：还要在车规温度范围测']},
+  '开源项目要 PR':{
+    prob:'改完要提 PR 给上游，代码风格受约束，不能破坏现有 API。',
+    ai:'我改完要提 PR 给上游开源项目，代码风格受约束。原帖自用方案不适用，求一个能合并的改法。',
+    tried:['试过直接加新路径，被要求保持接口','试过改现有 API，被要求向后兼容'],
+    help:['AI 建议保持接口向后兼容、新增可选路径','提供补单元测试证明不回归','待验证：还要过上游 CI 与 review']}
+};
+
+/* 缺省生成：p2/p3 等未单独撰写内容时，按节点真实字段兜底，保证每颗星都展示四大板块 */
+function dProb(nd){ const d=nd.diffs&&nd.diffs[0]; return d? `${nd.sit}　与原帖最大的不同在「${d[0]}」：原帖是「${d[1]}」，你这里是「${d[2]}」，结果${d[3]}。` : nd.sit; }
+function dHow(nd){ const m=nd.moves||[]; let s=''; if(m[0]) s+=`按 AI 建议的「${m[0][0]}」落地：${m[0][1]}`; if(m[1]) s+='；再配合「'+m[1][0]+'」'+m[1][1]+'。'; return s||'按 AI 给的方案落地并验证通过。'; }
+function dTried(nd){ return (nd.moves||[]).map(m=>'试过「'+m[0]+'」：'+m[1]); }
+function dAI(nd){ const t=((POSTS[cur]&&POSTS[cur].title)||'').split('：')[0].split(':')[0]; return `想把原帖的「${t}」方案，搬进「${nd.n}」这个真实处境——${nd.sit}。希望得到一个能落地的改法，而不是从头重写。`; }
+function dHelp(nd){ const d=nd.diffs&&nd.diffs[0]; const m0=(nd.moves&&nd.moves[0]&&nd.moves[0][0])||'核心改法'; const v=nd.v||verified.has(nd.n);
+  return [ `AI 针对「${nd.n}」重做了方案，把差异点落在「${d?d[0]:'场景'}」（${d?d[1]+' → '+d[2]:''}）`, `已对接原帖作者与相关圈子，确认「${m0}」在你的处境下可行`, v?'陪跑联调并验证通过，原帖价值加 1':'仍在跟进，等你把真实报错补全后进一步定位' ]; }
+
+/* ---------- 布局（倾斜星盘） ---------- */
+let seq=0;
+const DEPTH_COLOR=[null,'#6FCF97','#E7B873','#E0796E'];
+const DEPTH_NAME=['','改参数','改结构','换方案'];
+const RAD=Math.PI/180;
+const verified=new Set();           // 已被用户验证的场景名
+function allScenes(post){
+  if(post.scenes) return post.scenes;
+  const out=[];
+  (post.sectors||[]).forEach(s=>s.scenes.forEach(sc=>out.push(sc)));
+  return out;
+}
+function starPath(R, r){
+  let p=[];
+  for(let i=0;i<8;i++){
+    const a=(-90+i*45)*RAD, rad=(i%2===0)?R:r;
+    p.push((Math.cos(a)*rad).toFixed(2)+' '+(Math.sin(a)*rad).toFixed(2));
+  }
+  return 'M'+p.join(' L')+' Z';
+}
+function relaxAngles(pos){
+  const MIN=104;
+  for(let it=0; it<240; it++){
+    let moved=false;
+    for(let a=0;a<pos.length;a++){
+      for(let b=a+1;b<pos.length;b++){
+        const A=pos[a], B=pos[b];
+        const ax=CX+A.r*Math.cos(A.ang*RAD), ay=CY+A.r*Math.sin(A.ang*RAD);
+        const bx=CX+B.r*Math.cos(B.ang*RAD), by=CY+B.r*Math.sin(B.ang*RAD);
+        const d=Math.hypot(bx-ax, by-ay);
+        if(d>=MIN || d<0.001) continue;
+        moved=true;
+        const half=(MIN-d)*0.55;
+        const da=half/Math.max(A.r*RAD,1);
+        const db=half/Math.max(B.r*RAD,1);
+        if(A.ang<B.ang){ A.ang-=da; B.ang+=db; } else { A.ang+=da; B.ang-=db; }
+      }
+    }
+    if(!moved) break;
+  }
+}
+function layout(post){
+  const list=allScenes(post);
+  const pos=list.map((sc,i)=>({ang:0, r:RING[sc.d]||RING[2], sc, idx:i}));
+  const groups={1:[],2:[],3:[]};
+  list.forEach((sc,i)=>{ (groups[sc.d]||groups[2]).push(i); });
+  [1,2,3].forEach((d,gi)=>{
+    const g=groups[d], n=g.length;
+    if(!n) return;
+    const step=360/n, phase=-90+gi*(step/3);
+    g.forEach((idx,k)=>{ pos[idx].ang=phase+step*k; });
+  });
+  relaxAngles(pos);
+  return pos.map((p,i)=>{
+    const rad=p.ang*RAD;
+    const r2=p.r+(((i*53)%7)-3)*2.2;
+    const x=CX+r2*Math.cos(rad);
+    const y=CY+r2*Math.sin(rad)*SQUASH;
+    return {...p.sc, idx:i, color:DEPTH_COLOR[p.sc.d]||'#E7B873',
+      id:'n'+(seq++), ang:p.ang, r:r2, x, y};
+  });
+}
+
+/* ---------- 状态 ---------- */
+let cur=0, nodes=[], hover=null, lock=null, grown=0;
+let k=1, tx=0, ty=0, vp=null, justDragged=false;
+let fxEls=[], nwEls=[], nfEls=[], popEls=[], fePairs=[], nodeById=new Map();
+let mouseC=null, feRaf=null, lastPanelKey=null;
+const KMIN=0.45, KMAX=4, FE_R=155;
+
+const svg=document.getElementById('web');
+const panel=document.getElementById('panel');
+const toastEl=document.getElementById('toast');
+
+function ptOn(cx,cy,r,a){const t=a*Math.PI/180;return [cx+r*Math.cos(t), cy+r*Math.sin(t)];}
+function arcPath(cx,cy,r,a1,a2){
+  const [x1,y1]=ptOn(cx,cy,r,a1), [x2,y2]=ptOn(cx,cy,r,a2);
+  const large=Math.abs(a2-a1)>180?1:0;
+  return `M${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
+}
+
+/* 星海背景：随机星点 + 轻微闪烁 */
+function makeStarfield(){
+  const bg=document.getElementById('bgstars');
+  const W=900,H=790; bg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  let s='';
+  for(let i=0;i<160;i++){
+    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*1.3+0.3;
+    const o=(Math.random()*0.5+0.25).toFixed(2);
+    const dur=(Math.random()*3+2.5).toFixed(2);
+    const del=(Math.random()*4).toFixed(2);
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#CFD6E6" opacity="${o}"><animate attributeName="opacity" values="${o};${(o*0.35).toFixed(2)};${o}" dur="${dur}s" begin="${del}s" repeatCount="indefinite"/></circle>`;
+  }
+  bg.innerHTML=s;
+}
+
+function render(animate){
+  const post=POSTS[cur];
+  nodes=layout(post);
+  nodes=nodes.map(n=>Object.assign({}, n, SCENE_EXTRA[n.n]||{}));
+  const P=[];
+  P.push(`<g id="viewport">`);
+  P.push(`<defs>
+    <radialGradient id="sunGrad"><stop offset="0%" stop-color="#3A2F12"/><stop offset="55%" stop-color="#1C1810"/><stop offset="100%" stop-color="#0A0B0F"/></radialGradient>
+    <radialGradient id="core"><stop offset="0%" stop-color="#2A2418"/><stop offset="100%" stop-color="#12141C"/></radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="9"/></filter>
+  </defs>`);
+
+  /* 倾斜星盘轨道 */
+  [1,2,3].forEach(d=>{
+    const r=RING[d];
+    P.push(`<ellipse class="orbit" cx="${CX}" cy="${CY}" rx="${r}" ry="${(r*SQUASH).toFixed(1)}" stroke="${DEPTH_COLOR[d]}"/>`);
+  });
+
+  /* 原帖→星 射线 */
+  nodes.forEach(nd=>{
+    P.push(`<line class="ray" data-rad="${nd.id}" stroke="${nd.color}" x1="${CX}" y1="${CY}" x2="${nd.x.toFixed(1)}" y2="${nd.y.toFixed(1)}"/>`);
+  });
+
+  /* 星座连线（网状） */
+  (post.cross||[]).forEach(([a,b])=>{
+    const na=nodes.find(n=>n.n===a), nb=nodes.find(n=>n.n===b);
+    if(na&&nb) P.push(`<line class="xlink" x1="${na.x.toFixed(1)}" y1="${na.y.toFixed(1)}" x2="${nb.x.toFixed(1)}" y2="${nb.y.toFixed(1)}"/>`);
+  });
+
+  /* 太阳（原帖核心） */
+  const tot=nodes.length, vn=nodes.filter(x=>x.v||verified.has(x.n)).length;
+  const C=2*Math.PI*70;
+  P.push(`<circle class="sun-glow" cx="${CX}" cy="${CY}" r="82" fill="url(#sunGrad)" filter="url(#blur)"/>`);
+  P.push(`<circle cx="${CX}" cy="${CY}" r="70" fill="none" stroke="#2A2418" stroke-width="1"/>`);
+  P.push(`<circle class="varc" cx="${CX}" cy="${CY}" r="70" fill="none" stroke="#E7B873" stroke-width="3" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-vn/Math.max(tot,1))).toFixed(1)}" transform="rotate(-90 ${CX} ${CY})"/>`);
+  P.push(`<circle class="corec" cx="${CX}" cy="${CY}" r="58" fill="url(#core)" stroke="#3A3524" stroke-width="1"/>`);
+  P.push(`<g class="fix core-txt" data-x="${CX}" data-y="${CY}">
+    <text class="core-title" x="0" y="-22" text-anchor="middle">${post.title.split('：')[0]}</text>
+    <text class="core-sub" x="0" y="2" text-anchor="middle">原帖 · 基准场景</text>
+    <text class="core-num" x="0" y="24" text-anchor="middle">原帖价值 ★ ${vn}</text>
+    <text class="core-hint" x="0" y="44" text-anchor="middle">点击查看原帖详情</text>
+  </g>`);
+  P.push(`<circle id="corehit" cx="${CX}" cy="${CY}" r="72" fill="transparent"/>`);
+
+  /* 原帖约束胶囊 */
+  const chips=post.tags;
+  chips.forEach((c,i)=>{
+    const ang=-160+i*(320/Math.max(chips.length-1,1));
+    const [x,y]=ptOn(CX,CY,92,ang);
+    const w=c.length*9+16;
+    P.push(`<g class="fix" data-x="${x.toFixed(1)}" data-y="${y.toFixed(1)}">
+      <rect class="origin-box" x="${-w/2}" y="-10" width="${w}" height="20" rx="10"/>
+      <text class="origin-chip" x="0" y="1" text-anchor="middle" dominant-baseline="central">${c}</text></g>`);
+  });
+
+  /* 星节点 */
+  nodes.forEach(nd=>{
+    const v=nd.v||verified.has(nd.n);
+    const rr=6+nd.h*7;
+    const cos=Math.cos(nd.ang*RAD);
+    const dx=cos*16, dy=Math.sin(nd.ang*RAD)*16*SQUASH;
+    const anchor=cos>0.18?'start':(cos<-0.18?'end':'middle');
+    const tw=((nd.idx*37)%50)/10;   // 0..5s 闪烁相位
+    P.push(`<g class="node" data-id="${nd.id}" style="--nc:${nd.color}">
+      <g class="nwrap" data-x="${nd.x.toFixed(1)}" data-y="${nd.y.toFixed(1)}">
+        <g class="pop">
+          <circle class="nhit" r="${(rr+9).toFixed(1)}" fill="transparent" pointer-events="all"/>
+          <path class="star ${v?'on':''} ${v?'':'tw'}" style="animation-delay:${tw.toFixed(1)}s" d="${starPath(rr, rr*0.42)}" fill="${v?nd.color:'none'}" stroke="${nd.color}" stroke-width="${v?0:1.8}"/>
+          ${v?`<circle r="${(rr*0.34).toFixed(1)}" fill="#0A0B0F"/>`:''}
+        </g>
+        <text class="lbl nfix" data-dx="${dx.toFixed(1)}" data-dy="${dy.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="central">${nd.n}</text>
+        <text class="node-detail nfix" data-dx="${dx.toFixed(1)}" data-dy="${(dy+14).toFixed(1)}" text-anchor="${anchor}" dominant-baseline="central">${v?'已验证':'待验证'} · ${nd.peers}人相似</text>
+      </g>
+    </g>`);
+  });
+
+  P.push(`</g>`);
+  svg.innerHTML=P.join('');
+  vp=svg.querySelector('#viewport');
+  fxEls=[...svg.querySelectorAll('.fix')];
+  nwEls=[...svg.querySelectorAll('.nwrap')];
+  nfEls=[...svg.querySelectorAll('.nfix')];
+  popEls=[...svg.querySelectorAll('.pop')];
+  fePairs=popEls.map(pop=>({pop, id:pop.closest('.node').dataset.id}));
+  nodeById=new Map(nodes.map(n=>[n.id,n]));
+  bind();
+  applyZoom();
+  paint();
+  buildBrowse();
+  if(animate) growIn(); else applyFE();
+}
+
+/* 入场：太阳亮起 + 星点依次点亮 */
+function growIn(){
+  if(!window.Element.prototype.animate) return;
+  const STAG=46, DUR=480, BASE=160;
+  const order=[...nodes].sort((a,b)=>a.idx-b.idx);
+  order.forEach(nd=>{
+    const delay=BASE + nd.idx*STAG;
+    const p=svg.querySelector(`.ray[data-rad="${nd.id}"]`);
+    if(p){
+      const len=Math.hypot(nd.x-CX, nd.y-CY);
+      p.style.strokeDasharray=len; p.style.strokeDashoffset=len;
+      const an=p.animate([{strokeDashoffset:len},{strokeDashoffset:0}],
+        {duration:DUR, delay, easing:'cubic-bezier(.3,0,.2,1)', fill:'backwards'});
+      an.onfinish=()=>{p.style.strokeDasharray=''; p.style.strokeDashoffset='';};
+    }
+    const g=svg.querySelector(`.node[data-id="${nd.id}"]`);
+    if(g){
+      const pop=g.querySelector('.pop');
+      if(pop) pop.animate([{transform:'scale(0)'},{transform:'scale(1)'}],
+        {duration:460, delay:delay+DUR*0.4, easing:'cubic-bezier(.34,1.56,.64,1)', fill:'backwards'});
+      g.querySelectorAll('.nfix').forEach(t=>{
+        t.animate([{opacity:0},{opacity:1}],{duration:300, delay:delay+DUR*0.7, easing:'ease-out', fill:'backwards'});
+      });
+    }
+  });
+  svg.querySelectorAll('.corec').forEach((e,i)=>{
+    e.animate([{transform:'scale(0)',opacity:0},{transform:'scale(1)',opacity:1}],
+      {duration:640, delay:i*70, easing:'cubic-bezier(.34,1.56,.64,1)', fill:'backwards'});
+  });
+  svg.querySelectorAll('.sun-glow').forEach(e=>{
+    e.animate([{opacity:0},{opacity:.92}],{duration:680, delay:0, easing:'ease-out', fill:'backwards'});
+  });
+  /* 先把太阳拉到中心、亮起来，之后再显示中心文字 */
+  svg.querySelectorAll('.core-txt').forEach(e=>{
+    e.animate([{opacity:0},{opacity:1}],{duration:560, delay:660, easing:'cubic-bezier(.22,1,.36,1)', fill:'backwards'});
+  });
+  /* 原帖约束胶囊稍晚一点，仍早于中心文字，避免和太阳抢戏 */
+  svg.querySelectorAll('.fix:not(.core-txt)').forEach((e,i)=>{
+    e.animate([{opacity:0},{opacity:1}],{duration:420, delay:300+i*40, easing:'ease-out', fill:'backwards'});
+  });
+}
+
+function applyFE(){
+  const act=hover||lock;
+  for(const {pop,id} of fePairs){
+    const nd=nodeById.get(id);
+    if(!nd) continue;
+    let s=1;
+    if(mouseC){
+      const d=Math.hypot(nd.x-mouseC.x, nd.y-mouseC.y);
+      if(d<FE_R) s=1+0.5*Math.pow(1-d/FE_R,1.5);
+    }
+    if(id===act) s=Math.max(s,2.0);
+    pop.style.setProperty('--s', s.toFixed(3));
+  }
+}
+function scheduleFE(){ if(!feRaf) feRaf=requestAnimationFrame(()=>{feRaf=null; applyFE();}); }
+
+function bind(){
+  svg.querySelectorAll('.node').forEach(g=>{
+    const nd=nodes.find(x=>x.id===g.dataset.id);
+    g.addEventListener('mouseenter',()=>{hover=nd.id; paint();});
+    g.addEventListener('mouseleave',()=>{hover=null; paint();});
+  });
+  // 点按交互改在 pointerup（endPointer→handleTap）里处理：
+  // setPointerCapture 会让「按下/抬起目标不一致」，浏览器据此抑制 click 事件，
+  // 所以不能再依赖 click/dblclick，改为 pointerup 时 elementFromPoint 取真实元素。
+  svg.addEventListener('mouseleave',()=>{ if(hover){hover=null; paint();} });
+}
+
+const LODNAME=['','总览','星图','细节'];
+function applyZoom(){
+  if(!vp) return;
+  const c=1/Math.sqrt(k), inv=1/k;
+  vp.setAttribute('transform',`translate(${tx} ${ty}) scale(${k})`);
+  for(const g of fxEls) g.setAttribute('transform',`translate(${g.dataset.x} ${g.dataset.y}) scale(${inv})`);
+  for(const g of nwEls) g.setAttribute('transform',`translate(${g.dataset.x} ${g.dataset.y}) scale(${c})`);
+  for(const t of nfEls) t.setAttribute('transform',`translate(${t.dataset.dx} ${t.dataset.dy}) scale(${c})`);
+  const lod = k<0.8?1:(k<1.6?2:3);
+  svg.classList.remove('lod1','lod2','lod3');
+  svg.classList.add('lod'+lod);
+  const tag=document.getElementById('ztag');
+  if(tag) tag.innerHTML=`${LODNAME[lod]} · <b>${k.toFixed(1)}x</b>`;
+}
+function sPt(e){const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse());}
+function cPt(e){const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(vp.getScreenCTM().inverse());}
+const clamp=v=>Math.min(KMAX,Math.max(KMIN,v));
+function zoomAt(nk, sx, sy, cx, cy){ nk=clamp(nk); if(nk===k) return; k=nk; tx=sx-cx*k; ty=sy-cy*k; applyZoom(); }
+function animateTo(nk,ntx,nty,dur=340){
+  const k1=k, tx1=tx, ty1=ty, t0=performance.now();
+  (function step(t){
+    const p=Math.min((t-t0)/dur,1), e=1-Math.pow(1-p,3);
+    k=k1+(nk-k1)*e; tx=tx1+(ntx-tx1)*e; ty=ty1+(nty-ty1)*e; applyZoom();
+    if(p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
+function zoomBy(f){ const c={x:(CX-tx)/k, y:(CY-ty)/k}; const nk=clamp(k*f); animateTo(nk, CX-c.x*nk, CY-c.y*nk); }
+function resetView(){ fitView(); }
+function fitView(){
+  if(!nodes.length) return;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  nodes.forEach(n=>{
+    const cos=Math.cos(n.ang*RAD);
+    const w=n.n.length*11+12, h=20;
+    const anchor=cos>0.18?'start':(cos<-0.18?'end':'middle');
+    const lx=n.x+cos*16+(anchor==='start'?0:(anchor==='end'?-w:-w/2));
+    minX=Math.min(minX, Math.min(n.x-13, lx-4));
+    maxX=Math.max(maxX, Math.max(n.x+13, lx+w+4));
+    minY=Math.min(minY, n.y-17);
+    maxY=Math.max(maxY, n.y+17);
+  });
+  const pad=58; minX-=pad; maxX+=pad; minY-=pad; maxY+=pad;
+  const raw=Math.min(900/(maxX-minX), 790/(maxY-minY));
+  const nk=Math.min(Math.max(raw, KMIN), 1.45);
+  const ccx=(minX+maxX)/2, ccy=(minY+maxY)/2;
+  animateTo(nk, CX-ccx*nk, CY-ccy*nk, 560);
+}
+function focusNode(nd, nk){ nk=clamp(nk||2.55); animateTo(nk, CX-nd.x*nk, CY-nd.y*nk, 560); }
+
+svg.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const sp=sPt(e), cp=cPt(e);
+  const f=Math.exp(-e.deltaY*(e.ctrlKey?0.011:0.0022));
+  zoomAt(k*f, sp.x, sp.y, cp.x, cp.y);
+},{passive:false});
+
+let dragging=false, moved=0, lastPt=null;
+const touches=new Map();
+let pinch0=0, k0=1, anchorS={x:0,y:0}, anchorC={x:0,y:0};
+svg.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse' && e.button!==0) return;
+  touches.set(e.pointerId,{s:sPt(e), c:cPt(e)});
+  if(touches.size===2){
+    const [a,b]=[...touches.values()];
+    pinch0=Math.hypot(a.s.x-b.s.x, a.s.y-b.s.y)||1; k0=k;
+    anchorS={x:(a.s.x+b.s.x)/2, y:(a.s.y+b.s.y)/2};
+    anchorC={x:(a.c.x+b.c.x)/2, y:(a.c.y+b.c.y)/2};
+    dragging=false; return;
+  }
+  dragging=true; moved=0; lastPt=sPt(e);
+  svg.classList.add('grabbing');
+  try{svg.setPointerCapture(e.pointerId);}catch(_){}
+});
+svg.addEventListener('pointermove',e=>{
+  mouseC=cPt(e); scheduleFE();
+  if(touches.has(e.pointerId)) touches.set(e.pointerId,{s:sPt(e), c:touches.get(e.pointerId).c});
+  if(touches.size===2){
+    const [a,b]=[...touches.values()];
+    const d=Math.hypot(a.s.x-b.s.x, a.s.y-b.s.y)||1;
+    zoomAt(k0*d/pinch0, anchorS.x, anchorS.y, anchorC.x, anchorC.y); return;
+  }
+  if(!dragging) return;
+  const p=sPt(e), dx=p.x-lastPt.x, dy=p.y-lastPt.y;
+  moved+=Math.abs(dx)+Math.abs(dy);
+  tx+=dx; ty+=dy; lastPt=p; applyZoom();
+});
+function endPointer(e){
+  touches.delete(e.pointerId);
+  if(touches.size<2) pinch0=0;
+  if(dragging){
+    dragging=false; svg.classList.remove('grabbing');
+    const wasDrag = moved>4;
+    justDragged = wasDrag; setTimeout(()=>{justDragged=false;},0);
+    // 没有发生拖拽 = 这是一次「点按」，此时浏览器因 pointer 捕获不会派发 click，
+    // 所以直接在 pointerup 里用 elementFromPoint 还原真实目标并执行点击逻辑。
+    if(!wasDrag) handleTap(e.clientX, e.clientY);
+  }
+  try{svg.releasePointerCapture(e.pointerId);}catch(_){}
+}
+// 点按逻辑（替代被 pointer 捕获抑制的 click 事件）：用屏幕坐标找回真实星点/太阳
+function handleTap(cx, cy){
+  const el=document.elementFromPoint(cx, cy);
+  const g=el && el.closest('.node');
+  if(g){
+    const nd=nodes.find(x=>x.id===g.dataset.id);
+    if(!nd) return;
+    if(lock===nd.id){ lock=null; hover=null; paint(); showOverview(); fitView(); }
+    else { lock=nd.id; paint(); showNode(nd,true); focusNode(nd); }
+    return;
+  }
+  if(el && el.closest('#corehit')){ lock=null; hover=null; paint(); showOrigin(); fitView(); return; }
+  lock=null; paint(); showOverview(); fitView();
+}
+svg.addEventListener('pointerup',endPointer);
+svg.addEventListener('pointercancel',endPointer);
+svg.addEventListener('pointerleave',()=>{mouseC=null; scheduleFE();});
+document.getElementById('zin').onclick=()=>zoomBy(1.45);
+document.getElementById('zout').onclick=()=>zoomBy(1/1.45);
+document.getElementById('zfit').onclick=()=>resetView();
+window.addEventListener('keydown',e=>{
+  if(e.key==='='||e.key==='+') zoomBy(1.45);
+  else if(e.key==='-'||e.key==='_') zoomBy(1/1.45);
+  else if(e.key==='0') resetView();
+});
+
+function paint(){
+  const act=hover||lock;
+  svg.classList.toggle('locked', !!lock);
+  svg.querySelectorAll('.node').forEach(g=>g.classList.toggle('on',g.dataset.id===act));
+  svg.querySelectorAll('.ray').forEach(e=>e.classList.toggle('hot', e.dataset.rad===act));
+  if(act){ const g=svg.querySelector(`.node[data-id="${act}"]`); if(g) g.parentNode.appendChild(g); }
+  applyFE();
+  syncBrowseSel();
+}
+
+function openPanel(){}
+
+function revealPanel(){
+  const kids=[...panel.children];
+  kids.forEach((el,i)=>{ el.classList.add('reveal'); el.style.animationDelay=(i*42)+'ms'; });
+  panel.querySelectorAll('.moves li').forEach((li,i)=>{ li.classList.add('reveal'); li.style.animationDelay=(kids.length*42+i*55)+'ms'; });
+}
+
+function showOverview(){
+  const post=POSTS[cur];
+  const total=nodes.length, ver=nodes.filter(x=>x.v||verified.has(x.n)).length;
+  const h=[];
+  h.push(`<div class="kicker">星辰图 · 一帖千面</div>`);
+  h.push(`<div class="p-title">${post.title}</div>`);
+  h.push(`<p class="p-origin">${post.origin}</p>`);
+  h.push(`<div class="stat-line">
+    <div class="stat"><b>${total}</b><span>真实处境（星）</span></div>
+    <div class="stat"><b>${ver}</b><span>已被验证</span></div>
+    <div class="stat"><b>${total-ver}</b><span>待验证</span></div>
+  </div>`);
+  h.push(`<div class="sec">这张星图怎么读</div>`);
+  h.push(`<p class="hint">
+    正中是一颗<b>原帖太阳</b>，外圈每颗<b>星</b>都是一个真实读者的处境。<br>
+    星离太阳的<b>远近</b>＝照搬原帖要改多深：改参数 → 改结构 → 换方案；<br>
+    <span style="color:#6FCF97">绿</span>小改、<span style="color:#E7B873">金</span>动结构、<span style="color:#E0796E">红</span>推翻重做；<br>
+    <b>亮星</b>＝你或他人已验证、<b>暗星</b>＝待验证；星越大＝处境相似的人越多。<br><br>
+    <b>点一颗星</b>看它的解法，并决定「解决 / 没解决」；<b>点太阳</b>看原帖详情。
+    你每验证一颗星，原帖价值就 +1——同一个问题，不用每个人从头撞一遍墙。
+  </p>`);
+  h.push(`<div class="peer">这张星图就是这个帖子的全部价值：<b>成功路径</b> ＋ <b>被标记的死路</b>。</div>`);
+  panel.innerHTML=h.join('');
+  revealPanel();
+}
+
+function showNode(nd,locked){
+  if(!nd){showOverview();return;}
+  const v=nd.v||verified.has(nd.n);
+  const h=[];
+  h.push(`<div class="kicker">真实处境 · ${DEPTH_NAME[nd.d]}</div>`);
+  h.push(`<div class="p-title">${nd.n}</div>`);
+  h.push(`<div class="np-head">
+    <span class="verified ${v?'ok':'draft'}">${v?'● 已验证':'○ 待验证 · AI 草稿'}</span>
+    <button class="back-btn" data-back="1">← 返回星空</button>
+  </div>`);
+
+  /* ① 具体应用场景 */
+  h.push(`<div class="sec">① 具体应用场景</div>`);
+  h.push(`<p class="p-origin">${nd.sit}</p>`);
+  h.push(`<div class="sub">与原帖的关键差异</div>`);
+  h.push(`<table class="diff-tb"><tr><th>维度</th><th>原帖</th><th>我的</th><th>影响</th></tr>`);
+  nd.diffs.forEach(d=>{ h.push(`<tr><td class="dim">${d[0]}</td><td>${d[1]}</td><td class="mine">${d[2]}</td><td>${d[3]}</td></tr>`); });
+  h.push(`</table>`);
+  h.push(`<div class="sub">针对这个处境，AI 建议你这样改</div><ul class="moves">`);
+  nd.moves.forEach(m=>{h.push(`<li><b>${m[0]}</b>${m[1]}</li>`);});
+  h.push(`</ul>`);
+
+  /* ② 遇到的问题及解决情况 */
+  h.push(`<div class="sec">② 遇到的问题及解决情况</div>`);
+  h.push(`<p class="p-prob">${nd.prob||dProb(nd)}</p>`);
+  if(v){
+    h.push(`<div class="resolved ok"><b>已解决</b>　怎么做到的：${nd.how||dHow(nd)}</div>`);
+  } else {
+    h.push(`<div class="resolved no"><b>还没完全解决</b>　试过的方案：</div>`);
+    h.push(`<ul class="tried">`);
+    (nd.tried||dTried(nd)).forEach(t=>h.push(`<li>${t}</li>`));
+    h.push(`</ul>`);
+  }
+
+  /* ③ AI 对用户请求的总结（类似求助帖） */
+  h.push(`<div class="sec">③ AI 对你请求的总结（类似求助帖）</div>`);
+  h.push(`<div class="ai-summary">${nd.ai||dAI(nd)}</div>`);
+
+  /* ④ 帮助记录 */
+  h.push(`<div class="sec">④ 帮助记录</div>`);
+  h.push(`<div class="help-log">`);
+  (nd.help||dHelp(nd)).forEach(rec=>{ h.push(`<div class="help-item"><span class="hi-dot"></span><div class="hi-body">${rec}</div></div>`); });
+  h.push(`</div>`);
+
+  /* 行动 */
+  h.push(`<div class="peer">全网有 <b>${nd.peers}</b> 个人和你处境相似 · 迁移深度 <b>${DEPTH_NAME[nd.d]}</b></div>`);
+  h.push(`<div class="fb-row">`);
+  if(v){
+    h.push(`<button class="fb-btn unsolve" data-act="undo">撤销验证</button>`);
+  } else {
+    h.push(`<button class="fb-btn solve" data-act="solve">✓ 解决了</button>
+      <button class="fb-btn unsolve" data-act="unsolve">✗ 没解决</button>`);
+  }
+  h.push(`</div>`);
+  panel.innerHTML=h.join('');
+  const back=panel.querySelector('[data-back]');
+  if(back) back.onclick=()=>{ lock=null; hover=null; paint(); showOverview(); fitView(); };
+  panel.querySelectorAll('.fb-btn').forEach(b=>{
+    b.onclick=()=>{
+      const a=b.dataset.act;
+      if(a==='solve') markSolved(nd);
+      else if(a==='unsolve') showUnsolved(nd);
+      else if(a==='undo'){ verified.delete(nd.n); render(false); showNode(nd,true); toast('已撤销验证'); }
+    };
+  });
+  revealPanel();
+}
+
+function markSolved(nd){
+  verified.add(nd.n);
+  render(false);
+  const g=svg.querySelector(`.node[data-id="${nd.id}"]`);
+  if(g){
+    const rip=document.createElementNS(svg.namespaceURI,'circle');
+    rip.setAttribute('cx',nd.x); rip.setAttribute('cy',nd.y); rip.setAttribute('r',6); rip.setAttribute('class','ripple');
+    vp.appendChild(rip); setTimeout(()=>rip.remove(),1200);
+  }
+  showNode(nd,true);
+  toast('场景已验证 ✓ 原帖价值 +1');
+}
+
+/* 没解决 → 排查 + 给希望 + 找人求助 */
+function showUnsolved(nd){
+  const post=POSTS[cur], o=post.originDetail||{};
+  const h=[];
+  h.push(`<div class="kicker">真实处境 · ${DEPTH_NAME[nd.d]}</div>`);
+  h.push(`<div class="p-title">${nd.n}</div>`);
+  h.push(`<p class="p-origin">${nd.sit}</p>`);
+  h.push(`<div class="flow">
+    <h4>① 先别急——可能是细节没说清</h4>
+    <p>很多"行不通"其实是关键信息没对上。把下面几项补全，我能更准地帮你：</p>`);
+  nd.diffs.forEach(d=>{
+    h.push(`<label class="chk"><input type="checkbox"><span><b>${d[0]}</b>：原帖是「${d[1]}」，你这里是「${d[2]}」——这一步你确认过了吗？</span></label>`);
+  });
+  h.push(`</div>`);
+  h.push(`<div class="flow">
+    <h4>② 这件事是可以解决的</h4>
+    <p>原帖方案到你这里行不通，不代表 AI 不行、也不代表无解——只是要把它<b>翻译成你的处境</b>。可以先试这几步：</p>
+    <ul class="moves">`);
+  nd.moves.forEach(m=>{h.push(`<li><b>${m[0]}</b>${m[1]}</li>`);});
+  h.push(`</ul></div>`);
+  h.push(`<div class="flow">
+    <h4>③ 真超出范围，我帮你去找能解决的人</h4>
+    <p>如果这个具体场景确实超出当前能力，我不会假装能解。下面任意一种方式，我都可以替你整理好材料、发出去：</p>
+    <div class="help-btns">
+      <button class="chip-btn" data-ch="author">发给原帖作者</button>
+      <button class="chip-btn" data-ch="expert">发给领域高手</button>
+      <button class="chip-btn" data-ch="circle">发到对应圈子</button>
+    </div>
+    <div id="helpbox"></div>
+  </div>`);
+  h.push(`<div class="fb-row"><button class="fb-btn solve" data-back="1">← 其实我试成了</button></div>`);
+  panel.innerHTML=h.join('');
+  panel.querySelector('[data-back]').onclick=()=>{ verified.add(nd.n); render(false); showNode(nd,true); toast('场景已验证 ✓ 原帖价值 +1'); };
+  panel.querySelectorAll('.chip-btn').forEach(b=>{ b.onclick=()=>showHelp(nd, b.dataset.ch, post, o); });
+}
+
+function showHelp(nd, ch, post, o){
+  const map={
+    author:['发给原帖作者', `向《${post.title}》的作者请教`],
+    expert:['发给领域高手', `向「${nd.n}」相关领域的资深玩家请教`],
+    circle:['发到对应圈子', `发到「${post.tags[0]||'该主题'}」相关圈子`]
+  };
+  const [label, lead]=map[ch]||map.author;
+  const diffsTxt=nd.diffs.map(d=>`　· ${d[0]}：原帖「${d[1]}」，我「${d[2]}」（${d[3]}）`).join('\n');
+  const movesTxt=nd.moves.map(m=>`　· ${m[0]}：${m[1]}`).join('\n');
+  const text=
+`【场景炼金师 · 求助】${lead}
+———————————
+原帖：${post.title}
+原帖基准场景：${o.scene||post.origin}
+
+我的真实场景：
+${nd.sit}
+
+和原帖的关键差异：
+${diffsTxt}
+
+原帖方案到我这里行不通，我试过的改法：
+${movesTxt}
+
+目前卡在：_____（请补充你的具体报错 / 现象）
+有没有踩过类似坑的朋友，指点一下？谢谢！`;
+  const box=panel.querySelector('#helpbox');
+  box.innerHTML=`<textarea class="help-box" readonly>${text.replace(/</g,'&lt;')}</textarea>
+    <button class="copy-btn" id="copybtn">复制求助帖</button>
+    <div class="fb-note" id="copynote" style="display:none">已复制 ✓ 去 ${label} 直接粘贴发出</div>`;
+  box.querySelector('#copybtn').onclick=()=>{
+    navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>{ box.querySelector('#copynote').style.display='block'; });
+  };
+}
+
+function showOrigin(){
+  const post=POSTS[cur], o=post.originDetail||{};
+  const h=[];
+  h.push(`<div class="kicker">原帖 · 基准场景（太阳）</div>`);
+  h.push(`<div class="p-title">${post.title}</div>`);
+  h.push(`<p class="p-origin">${o.scene||post.origin}</p>`);
+  if(post.tags&&post.tags.length) h.push(`<div class="tags">${post.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`);
+  if(o.solution&&o.solution.length){
+    h.push(`<div class="sec">作者原方案</div><ul class="moves">`);
+    o.solution.forEach((s,i)=>h.push(`<li><b>第 ${i+1} 步</b>${s}</li>`));
+    h.push(`</ul>`);
+  }
+  if(o.params){
+    h.push(`<div class="sec">关键参数</div><table class="diff-tb">`);
+    Object.entries(o.params).forEach(([k,v])=>{ h.push(`<tr><td class="dim">${k}</td><td class="mine" colspan="3">${v}</td></tr>`); });
+    h.push(`</table>`);
+  }
+  if(o.boundaries) h.push(`<div class="sec">适用边界</div><p class="hint">${o.boundaries}</p>`);
+  const vn=nodes.filter(x=>x.v||verified.has(x.n)).length;
+  h.push(`<div class="sec">这颗太阳的价值</div>`);
+  h.push(`<p class="hint">它已经被迁移成 <b style="color:var(--gold)">${nodes.length}</b> 颗真实处境的星，
+    其中 <b style="color:var(--gold)">${vn}</b> 颗已被验证。<br>
+    每验证一颗，原帖价值就 +1——它解决的不再是作者一个人，而是所有同处境的人。</p>`);
+  h.push(`<div class="peer">原帖只解决作者一个人的问题，<b>这张星图解决所有同处境的人</b>。</div>`);
+  panel.innerHTML=h.join('');
+  revealPanel();
+}
+
+const postsEl=document.getElementById('posts');
+POSTS.forEach((p,i)=>{
+  const b=document.createElement('button');
+  b.className='post-chip'+(i===0?' on':'');
+  b.textContent='帖'+(i+1)+' · '+p.title.split(/[：:]/)[0].slice(0,10);
+  b.onclick=()=>{cur=i; lock=null; grown=0;
+    [...postsEl.children].forEach((c,k)=>c.classList.toggle('on',k===i));
+    document.getElementById('grow').disabled=false;
+    render(true); showOverview(); resetView();};
+  postsEl.appendChild(b);
+});
+
+/* 已收录场景：不只看自己的，也能浏览别人已经收录进来的真实处境 */
+const drawerEl=document.getElementById('drawer');
+const dlistEl=document.getElementById('dlist');
+const bcountEl=document.getElementById('bcount');
+const DEPTH_GROUPS=[[1,'小改参数'],[2,'动结构'],[3,'换方案']];
+function buildBrowse(){
+  if(!dlistEl) return;
+  let h='';
+  DEPTH_GROUPS.forEach(([d,name])=>{
+    const list=nodes.filter(n=>(n.d||2)===d);
+    if(!list.length) return;
+    h+=`<div class="dgrp">${name} · ${list.length} 个</div>`;
+    list.forEach(nd=>{
+      const v=nd.v||verified.has(nd.n);
+      h+=`<div class="drow${lock===nd.id?' on':''}" data-id="${nd.id}">
+        <i class="ddot${v?' v':''}" style="--dc:${nd.color}"></i>
+        <span class="dn">${nd.n}</span>
+        <span class="dm">${v?'已验证':'待验证'} · ${nd.peers}人</span>
+      </div>`;
+    });
+  });
+  dlistEl.innerHTML=h;
+  if(bcountEl) bcountEl.textContent=nodes.length;
+  if(!h) dlistEl.innerHTML='<div class="dgrp">这个原帖下还没有收录的场景</div>';
+  dlistEl.querySelectorAll('.drow').forEach(row=>{
+    row.onclick=()=>{
+      const nd=nodes.find(x=>x.id===row.dataset.id);
+      if(!nd) return;
+      closeBrowse();
+      lock=nd.id; paint(); showNode(nd,true); focusNode(nd); syncBrowseSel();
+    };
+  });
+}
+function syncBrowseSel(){
+  if(!dlistEl) return;
+  dlistEl.querySelectorAll('.drow').forEach(r=>r.classList.toggle('on', r.dataset.id===lock));
+}
+function openBrowse(){ buildBrowse(); if(drawerEl) drawerEl.classList.add('open'); }
+function closeBrowse(){ if(drawerEl) drawerEl.classList.remove('open'); }
+document.getElementById('browse').onclick=()=>{
+  if(drawerEl&&drawerEl.classList.contains('open')) closeBrowse(); else openBrowse();
+};
+document.getElementById('dclose').onclick=closeBrowse;
+
+/* 加入我的场景（星图生长） */
+const POOL=[
+  {s:0,n:'USB 转多路串口',d:2,h:.5,v:0,peers:2,sit:'一个 USB 转四路串口的调试器，每路速率不同',
+   diffs:[['通道','单路','四路不同速率','需要分时调度']],moves:[['分时轮询 + 优先级','高优先级通道先服务']]},
+  {s:1,n:'能量采集供电',d:3,h:.45,v:0,peers:1,sit:'从环境取电，电压不稳，MCU 频繁复位',
+   diffs:[['供电','稳定','间歇掉电','串口状态机要能恢复']],moves:[['掉电前保存状态','备份寄存器'],['上电自检重同步','握手三次再收数']]},
+  {s:2,n:'长距离 LoRa 网关',d:3,h:.55,v:0,peers:2,sit:'串口接 LoRa 模块，数据包长且到达不规律',
+   diffs:[['包长','短帧','255B 变长包','定长缓冲不够']],moves:[['动态长度帧解析','先收长度字节再定长']]},
+  {s:3,n:'车规级 MCU',d:2,h:.4,v:0,peers:1,sit:'换到车规 MCU，外设时钟树不同',
+   diffs:[['器件','消费级','车规','时钟分频差异']],moves:[['重算波特率误差','按新时钟树配置 BRR']]},
+  {s:4,n:'开源项目要 PR',d:2,h:.5,v:0,peers:3,sit:'改完要提 PR 给上游，代码风格受约束',
+   diffs:[['交付','自用','上游合并','不能破坏现有 API']],moves:[['保持接口向后兼容','新增可选路径'],['补单元测试','证明不回归']]}
+];
+document.getElementById('grow').onclick=()=>{
+  if(grown>=POOL.length){return;}
+  const sc=POOL[grown++];
+  const post=POSTS[cur];
+  const target=post.sectors[sc.s%post.sectors.length];
+  target.scenes.push(sc);
+  render();
+  const nd=nodes.find(x=>x.n===sc.n);
+  if(!nd){return;}
+  const g=svg.querySelector(`.node[data-id="${nd.id}"]`);
+  const len=Math.hypot(nd.x-CX, nd.y-CY);
+  const t0=performance.now(), dur=900, x0=CX, y0=CY;
+  function step(t){
+    const kk=Math.min((t-t0)/dur,1);
+    const e=1-Math.pow(1-kk,3);
+    const cx=CX+(nd.x-CX)*e, cy=CY+(nd.y-CY)*e;
+    g.setAttribute('transform',`translate(${x0-cx} ${y0-cy})`);
+    g.style.opacity=String(0.2+0.8*e);
+    if(kk<1){requestAnimationFrame(step);}
+    else{
+      g.removeAttribute('transform'); g.style.opacity='1';
+      const rip=document.createElementNS(svg.namespaceURI,'circle');
+      rip.setAttribute('cx',nd.x); rip.setAttribute('cy',nd.y); rip.setAttribute('r',6); rip.setAttribute('class','ripple');
+      vp.appendChild(rip); setTimeout(()=>rip.remove(),1200);
+      showNode(nd,true); lock=nd.id; paint(); focusNode(nd);
+    }
+  }
+  requestAnimationFrame(step);
+  toast(`星图因你 +1　现在是第 ${nodes.length} 颗星`);
+  if(grown>=POOL.length) document.getElementById('grow').disabled=true;
+};
+
+let tt;
+function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>toastEl.classList.remove('on'),2600); }
+
+makeStarfield();
+render(true); showOverview(); fitView();
+</script>
+</body>
+</html>
