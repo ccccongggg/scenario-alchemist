@@ -190,8 +190,8 @@
   }
   .lg{display:flex; align-items:center; gap:7px}
   .lg i{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--gold)}
-  .lg.solid i{background:var(--gold)}
-  .lg.hollow i{background:transparent; border:1.5px solid var(--gold)}
+  .lg.solid i{background:#6FCF97}
+  .lg.hollow i{background:transparent; border:1.6px solid #E0796E}
   .lg small{color:var(--t3)}
 
   .toast{
@@ -286,12 +286,9 @@
   </main>
 
   <footer data-page-node-id="MwY3dAU1EV5kcRBX1rMuPI">
-    <span class="lg" data-page-node-id="tcZNjbASTDgHhJjLqEqPQE"><i style="background:#6FCF97" data-page-node-id="bx3J5FjODdFY444UWnZUhM"></i>绿＝小改参数</span>
-    <span class="lg" data-page-node-id="un4iGYZFjh75GRlORNmcAH"><i style="background:#E7B873" data-page-node-id="8KatSEXNV8r7QmO9Q2ngPf"></i>金＝动结构</span>
-    <span class="lg" data-page-node-id="ngw0JuMxJsxaOHBTAL9CXB"><i style="background:#E0796E" data-page-node-id="hUr476f4lgmvMalRvNOVC0"></i>红＝换方案</span>
-    <span class="lg solid" data-page-node-id="BOciLlxDL3riu7iaR1UGEd"><i data-page-node-id="SBC6hnnlUvoCbro6qKRaFm"></i>亮星＝已验证</span>
-    <span class="lg hollow" data-page-node-id="42nSzdQgVeEG1HyFAHBge4"><i data-page-node-id="RNzDZSHmrGJqY49Qh48Usr"></i>暗星＝待验证</span>
-    <span class="lg" data-page-node-id="uxe0edDmKnE8eQe11jt57w"><i style="width:6px;height:6px" data-page-node-id="1LpZlMZDj22Ej7gOuM5atT"></i><small data-page-node-id="VdbEEZU00CvFMcv3Vaw64V">星小</small><i style="width:11px;height:11px" data-page-node-id="C2KxxzYF0yYWrC4bpCuDdN"></i><small data-page-node-id="pEacO8fGHbjsyYo4eqBDHy">星大＝相似的人更多</small></span>
+    <span class="lg solid" data-page-node-id="BOciLlxDL3riu7iaR1UGEd"><i data-page-node-id="SBC6hnnlUvoCbro6qKRaFm"></i>实心绿星＝已验证（解决了）</span>
+    <span class="lg hollow" data-page-node-id="42nSzdQgVeEG1HyFAHBge4"><i data-page-node-id="RNzDZSHmrGJqY49Qh48Usr"></i>空心红星＝待验证（还没解决）</span>
+    <span class="lg" data-page-node-id="uxe0edDmKnE8eQe11jt57w"><i style="background:#5A6478" data-page-node-id="1LpZlMZDj22Ej7gOuM5atT"></i><small data-page-node-id="VdbEEZU00CvFMcv3Vaw64V">轨道环由内到外＝迁移深度（小改参数 / 动结构 / 换方案）</small></span>
   </footer>
 
   <div class="drawer" id="drawer" data-page-node-id="dRaWeR9mQ2xLpK7vN3tBsC">
@@ -699,6 +696,9 @@ function dHelp(nd){ const d=nd.diffs&&nd.diffs[0]; const m0=(nd.moves&&nd.moves[
 /* ---------- 布局（倾斜星盘） ---------- */
 let seq=0;
 const DEPTH_COLOR=[null,'#6FCF97','#E7B873','#E0796E'];
+/* 星形只表达两件事：已验证（实心绿星）/ 待验证（空心红星）。
+   颜色专门用于「是否验证通过」；迁移深度改用轨道环的远近表示。 */
+const STAR_ON='#6FCF97', STAR_OFF='#E0796E';
 const DEPTH_NAME=['','改参数','改结构','换方案'];
 const RAD=Math.PI/180;
 const verified=new Set();           // 已被用户验证的场景名
@@ -751,8 +751,8 @@ function layout(post){
   relaxAngles(pos);
   return pos.map((p,i)=>{
     const rad=p.ang*RAD;
-    const rOff=((i*41)%17)-8;              // -8..8，确定性地把星点推离环线
-    const r2=p.r+(rOff===0?3:rOff)*4;      // 保证没有星点正好落在轨道环上
+    const rOff=((i*41)%17);                // 0..16，确定性地向外推
+    const r2=p.r+20+rOff*3;                // 一律推离轨道环外侧（+20..+68），不再贴在环上
     const x=CX+r2*Math.cos(rad);
     const y=CY+r2*Math.sin(rad)*SQUASH;
     return {...p.sc, idx:i, color:DEPTH_COLOR[p.sc.d]||'#E7B873',
@@ -808,12 +808,13 @@ function render(animate){
   /* 倾斜星盘轨道 */
   [1,2,3].forEach(d=>{
     const r=RING[d];
-    P.push(`<ellipse class="orbit" cx="${CX}" cy="${CY}" rx="${r}" ry="${(r*SQUASH).toFixed(1)}" stroke="${DEPTH_COLOR[d]}"/>`);
+    P.push(`<ellipse class="orbit" cx="${CX}" cy="${CY}" rx="${r}" ry="${(r*SQUASH).toFixed(1)}" stroke="#5A6478"/>`);
   });
 
-  /* 原帖→星 射线 */
+  /* 原帖→星 射线（颜色跟随星形：金＝已验证 / 灰＝待验证） */
   nodes.forEach(nd=>{
-    P.push(`<line class="ray" data-rad="${nd.id}" stroke="${nd.color}" x1="${CX}" y1="${CY}" x2="${nd.x.toFixed(1)}" y2="${nd.y.toFixed(1)}"/>`);
+    const rv=nd.v||verified.has(nd.n);
+    P.push(`<line class="ray" data-rad="${nd.id}" stroke="${rv?STAR_ON:STAR_OFF}" x1="${CX}" y1="${CY}" x2="${nd.x.toFixed(1)}" y2="${nd.y.toFixed(1)}"/>`);
   });
 
   /* 星座连线（网状） */
@@ -842,17 +843,17 @@ function render(animate){
   /* 星节点 */
   nodes.forEach(nd=>{
     const v=nd.v||verified.has(nd.n);
-    const rr=6+nd.h*7;
+    const rr=9.5;                          // 统一大小：星形只区分「已验证 / 待验证」两种
+    const col=v?STAR_ON:STAR_OFF;
     const cos=Math.cos(nd.ang*RAD);
     const dx=cos*16, dy=Math.sin(nd.ang*RAD)*16*SQUASH;
     const anchor=cos>0.18?'start':(cos<-0.18?'end':'middle');
     const tw=((nd.idx*37)%50)/10;   // 0..5s 闪烁相位
-    P.push(`<g class="node" data-id="${nd.id}" style="--nc:${nd.color}">
+    P.push(`<g class="node" data-id="${nd.id}" style="--nc:${col}">
       <g class="nwrap" data-x="${nd.x.toFixed(1)}" data-y="${nd.y.toFixed(1)}">
         <g class="pop">
           <circle class="nhit" r="${(rr+9).toFixed(1)}" fill="transparent" pointer-events="all"/>
-          <path class="star ${v?'on':''} ${v?'':'tw'}" style="animation-delay:${tw.toFixed(1)}s" d="${starPath(rr, rr*0.42)}" fill="${v?nd.color:'none'}" stroke="${nd.color}" stroke-width="${v?0:1.8}"/>
-          ${v?`<circle r="${(rr*0.34).toFixed(1)}" fill="#0A0B0F"/>`:''}
+          <path class="star ${v?'on':''} ${v?'':'tw'}" style="animation-delay:${tw.toFixed(1)}s" d="${starPath(rr, rr*0.42)}" fill="${v?col:'none'}" stroke="${col}" stroke-width="${v?0:1.8}"/>
         </g>
         <text class="lbl nfix" data-dx="${dx.toFixed(1)}" data-dy="${dy.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="central">${nd.n}</text>
         <text class="node-detail nfix" data-dx="${dx.toFixed(1)}" data-dy="${(dy+14).toFixed(1)}" text-anchor="${anchor}" dominant-baseline="central">${v?'已验证':'待验证'} · ${nd.peers}人相似</text>
@@ -1101,9 +1102,8 @@ function showOverview(){
   h.push(`<div class="sec">这张星图怎么读</div>`);
   h.push(`<p class="hint">
     正中是一颗<b>原帖太阳</b>，外圈每颗<b>星</b>都是一个真实读者的处境。<br>
-    星离太阳的<b>远近</b>＝照搬原帖要改多深：改参数 → 改结构 → 换方案；<br>
-    <span style="color:#6FCF97">绿</span>小改、<span style="color:#E7B873">金</span>动结构、<span style="color:#E0796E">红</span>推翻重做；<br>
-    <b>亮星</b>＝你或他人已验证、<b>暗星</b>＝待验证；星越大＝处境相似的人越多。<br><br>
+    <b>实心绿星</b>＝已验证（解决了）、<b>空心红星</b>＝待验证（还没解决）——颜色只表示这一件事。<br>
+    星离太阳的<b>远近</b>（由内到外三层轨道环）＝照搬原帖要改多深：<b>小改参数</b> → <b>动结构</b> → <b>换方案</b>。<br><br>
     <b>点一颗星</b>看它的解法，并决定「解决 / 没解决」；<b>点太阳</b>看原帖详情。
     你每验证一颗星，原帖价值就 +1——同一个问题，不用每个人从头撞一遍墙。
   </p>`);
@@ -1319,7 +1319,7 @@ function buildBrowse(){
     list.forEach(nd=>{
       const v=nd.v||verified.has(nd.n);
       h+=`<div class="drow${lock===nd.id?' on':''}" data-id="${nd.id}">
-        <i class="ddot${v?' v':''}" style="--dc:${nd.color}"></i>
+        <i class="ddot${v?' v':''}" style="--dc:${v?STAR_ON:STAR_OFF}"></i>
         <span class="dn">${nd.n}</span>
         <span class="dm">${v?'已验证':'待验证'} · ${nd.peers}人</span>
       </div>`;
